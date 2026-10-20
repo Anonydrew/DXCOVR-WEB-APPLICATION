@@ -49,6 +49,9 @@ class AppServiceProvider extends ServiceProvider
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
 
         if ($this->app->isProduction() && str_starts_with((string) config('app.url'), 'https://')) {
+            // Links and canonical URLs always use APP_URL, whatever host or sub-folder
+            // path (e.g. a shared-hosting rewrite target) the request arrived on.
+            URL::forceRootUrl(config('app.url'));
             URL::forceScheme('https');
         }
 

@@ -27,6 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Hostinger's CDN (and Cloudflare, if added) sits in front of the site, so
+        // trust its forwarded headers for HTTPS detection and per-visitor rate limits.
+        $middleware->trustProxies(at: '*');
+
         $middleware->append(SecurityHeaders::class);
         $middleware->prepend(HandleRedirects::class);
 
