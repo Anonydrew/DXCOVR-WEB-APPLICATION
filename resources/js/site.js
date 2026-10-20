@@ -255,6 +255,57 @@ function initAnnouncement() {
     });
 }
 
+/* Looping videos: play while visible, respect reduced motion, pausable -- */
+
+function initLoopVideos() {
+    document.querySelectorAll('[data-loop-video]').forEach((video) => {
+        const toggle = video.parentElement.querySelector('[data-video-toggle]');
+        const label = toggle?.querySelector('[data-video-label]');
+        const pauseIcon = toggle?.querySelector('[data-video-icon="pause"]');
+        const playIcon = toggle?.querySelector('[data-video-icon="play"]');
+        let stoppedByVisitor = reduceMotion.matches;
+        let visible = false;
+
+        const render = () => {
+            const paused = video.paused;
+            toggle?.setAttribute('aria-pressed', String(paused));
+            if (label) label.textContent = paused ? 'Play video' : 'Pause video';
+            pauseIcon?.classList.toggle('hidden', paused);
+            playIcon?.classList.toggle('hidden', !paused);
+        };
+
+        const sync = () => {
+            if (visible && !stoppedByVisitor) {
+                video.play().catch(() => {});
+            } else {
+                video.pause();
+            }
+        };
+
+        if (toggle) {
+            toggle.hidden = false;
+            toggle.addEventListener('click', () => {
+                stoppedByVisitor = !video.paused;
+                if (stoppedByVisitor) {
+                    video.pause();
+                } else {
+                    video.play().catch(() => {});
+                }
+            });
+        }
+
+        video.addEventListener('play', render);
+        video.addEventListener('pause', render);
+
+        new IntersectionObserver((entries) => {
+            visible = entries[0].isIntersecting;
+            sync();
+        }, { threshold: 0.25 }).observe(video);
+
+        render();
+    });
+}
+
 /* Share: native share sheet, falling back to copying the link ---------- */
 
 function initShareButtons() {
@@ -455,6 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnnouncement();
     initCopyLinks();
     initShareButtons();
+    initLoopVideos();
     initToc();
     initCarousels();
     initMotionToggles();

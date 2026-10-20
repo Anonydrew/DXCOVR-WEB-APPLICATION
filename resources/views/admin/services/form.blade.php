@@ -35,6 +35,8 @@
                 <h2 class="a-card-title sm:col-span-2">Hero media</h2>
                 <x-admin.media-field name="hero_media_id" label="Hero image" :media="$service->heroImage" class="sm:col-span-2" />
                 <x-admin.input name="hero_video_url" label="Hero video (YouTube or Vimeo)" :value="$service->hero_video_url" type="url" class="sm:col-span-2" hint="Takes priority over the hero image when set." />
+                <x-admin.media-field name="loop_video_media_id" label="Looping video for the services page (optional)" :media="$service->loopVideo" accept="video" class="sm:col-span-2"
+                    hint="A short, silent MP4 (5 to 20 seconds, under 10 MB). It plays on a loop beside this service on the services page, with the hero image shown while it loads." />
             </div>
 
             <div class="a-card a-card-body grid gap-5 sm:grid-cols-2">

@@ -23,7 +23,7 @@ class ServiceController extends Controller
         return view('site.services.index', [
             'page' => $page,
             'bodyClass' => 'has-overlay-header',
-            'services' => Service::query()->published()->ordered()->get(),
+            'services' => Service::query()->published()->ordered()->with(['heroImage', 'loopVideo'])->get(),
             'sections' => $sections,
             'sectionData' => $this->resolver->resolve($sections),
             'seo' => Seo::make($page?->title ?? 'Services')

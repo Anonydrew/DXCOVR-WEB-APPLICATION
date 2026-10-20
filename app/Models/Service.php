@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property list<array{title: string, body: string|null}>|null $process_steps
  */
 #[Fillable([
-    'title', 'slug', 'icon', 'short_description', 'body', 'hero_media_id', 'hero_video_url', 'capabilities',
+    'title', 'slug', 'icon', 'short_description', 'body', 'hero_media_id', 'hero_video_url', 'loop_video_media_id', 'capabilities',
     'use_cases', 'process_steps', 'cta_heading', 'cta_body', 'cta_label', 'cta_url', 'is_featured', 'sort_order',
 ])]
 class Service extends Model
@@ -56,6 +56,11 @@ class Service extends Model
     public function heroImage(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'hero_media_id');
+    }
+
+    public function loopVideo(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'loop_video_media_id');
     }
 
     public function projects(): BelongsToMany

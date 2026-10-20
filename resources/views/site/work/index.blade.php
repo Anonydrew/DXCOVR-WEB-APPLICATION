@@ -1,97 +1,95 @@
 @extends('layouts.site')
 
+@php
+    $technologyName = $filters['technology'] ? $technologies->firstWhere('slug', $filters['technology'])?->name : null;
+    $without = fn (string $key) => route('work.index', array_filter(array_merge($filters, [$key => null])));
+@endphp
+
 @section('content')
-    <x-site.page-hero
-        eyebrow="Work"
-        :title="$page?->title ?? 'Selected work'"
-        :lede="$page?->excerpt"
-        :breadcrumbs="$seo->breadcrumbItems()"
-        glyph="modelling"
-    />
+    <section class="surface-light work-page" aria-labelledby="work-heading">
+        <div class="work-page-inner">
+            <header class="work-page-header">
+                <p class="work-page-kicker" aria-hidden="true">work</p>
+                <h1 id="work-heading" class="work-page-title">{{ $page?->title ?? 'Work that solves real problems' }}</h1>
+            </header>
 
-    <section class="surface-dark pb-24 sm:pb-32" aria-labelledby="work-results">
-        <div class="container-dx">
-            <h2 id="work-results" class="sr-only">Projects</h2>
+            @if ($categories->isNotEmpty() || $services->isNotEmpty() || $hasFilters)
+                <form method="GET" action="{{ route('work.index') }}" class="work-filters" aria-label="Filter projects">
+                    <ul class="flex flex-wrap gap-2">
+                        <li><a href="{{ $without('category') }}" class="work-pill" @if (! $filters['category']) aria-current="true" @endif>All</a></li>
+                        @foreach ($categories as $category)
+                            <li><a href="{{ route('work.index', array_filter(array_merge($filters, ['category' => $category->slug]))) }}" class="work-pill" @if ($filters['category'] === $category->slug) aria-current="true" @endif>{{ $category->name }}</a></li>
+                        @endforeach
+                        @if ($technologyName)
+                            <li><a href="{{ $without('technology') }}" class="work-pill" aria-current="true" aria-label="Remove filter: {{ $technologyName }}">{{ $technologyName }} <x-icon name="close" :size="14" /></a></li>
+                        @endif
+                        @if ($filters['type'])
+                            <li><a href="{{ $without('type') }}" class="work-pill" aria-current="true" aria-label="Remove filter: {{ $types[$filters['type']] }}">{{ $types[$filters['type']] }} <x-icon name="close" :size="14" /></a></li>
+                        @endif
+                    </ul>
 
-            @if ($categories->isNotEmpty() || $services->isNotEmpty() || $technologies->isNotEmpty())
-                <form method="GET" action="{{ route('work.index') }}" class="mb-12 rounded-[var(--radius-card)] border border-line bg-ink-2 p-5 sm:p-6" aria-label="Filter projects">
-                    @if ($categories->isNotEmpty())
-                        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Category">
-                            <a href="{{ route('work.index', array_filter(array_merge($filters, ['category' => null]))) }}" class="chip" @if (! $filters['category']) aria-current="true" @endif>All categories</a>
-                            @foreach ($categories as $category)
-                                <a href="{{ route('work.index', array_filter(array_merge($filters, ['category' => $category->slug]))) }}" class="chip" @if ($filters['category'] === $category->slug) aria-current="true" @endif>{{ $category->name }}</a>
-                            @endforeach
-                        </div>
-                    @endif
-                    @if ($filters['category'])
-                        <input type="hidden" name="category" value="{{ $filters['category'] }}">
-                    @endif
-                    <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <div>
-                            <label for="filter-service" class="field-label">Service</label>
-                            <select id="filter-service" name="service" class="field" data-autosubmit>
+                    @foreach (['category', 'technology', 'type'] as $kept)
+                        @if ($filters[$kept])
+                            <input type="hidden" name="{{ $kept }}" value="{{ $filters[$kept] }}">
+                        @endif
+                    @endforeach
+
+                    @if ($services->isNotEmpty())
+                        <div class="flex max-w-full items-center gap-2">
+                            <label for="filter-service" class="sr-only">Service</label>
+                            <select id="filter-service" name="service" class="work-select" data-autosubmit>
                                 <option value="">All services</option>
                                 @foreach ($services as $service)
                                     <option value="{{ $service->slug }}" @selected($filters['service'] === $service->slug)>{{ $service->title }}</option>
                                 @endforeach
                             </select>
+                            <noscript><button type="submit" class="work-pill">Show</button></noscript>
                         </div>
-                        <div>
-                            <label for="filter-technology" class="field-label">Technology</label>
-                            <select id="filter-technology" name="technology" class="field" data-autosubmit>
-                                <option value="">All technologies</option>
-                                @foreach ($technologies as $technology)
-                                    <option value="{{ $technology->slug }}" @selected($filters['technology'] === $technology->slug)>{{ $technology->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="filter-type" class="field-label">Project type</label>
-                            <select id="filter-type" name="type" class="field" data-autosubmit>
-                                <option value="">All types</option>
-                                @foreach ($types as $value => $label)
-                                    <option value="{{ $value }}" @selected($filters['type'] === $value)>{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="flex items-end gap-3">
-                            <button type="submit" class="btn btn-secondary flex-1">Apply filters</button>
-                            @if ($hasFilters)
-                                <a href="{{ route('work.index') }}" class="btn btn-sm text-muted hover:text-text">Clear</a>
-                            @endif
-                        </div>
-                    </div>
+                    @endif
                 </form>
             @endif
 
+            <h2 class="sr-only">Projects</h2>
+
             @if ($projects->isEmpty())
-                @if ($hasFilters)
-                    <x-site.empty-state title="No projects match these filters" glyph="modelling">
-                        Try removing a filter, or browse everything we have published.
-                        <x-slot:actions>
-                            <a href="{{ route('work.index') }}" class="btn btn-secondary">Show all work</a>
-                        </x-slot:actions>
-                    </x-site.empty-state>
-                @else
-                    <x-site.empty-state title="Case studies are on their way" glyph="modelling">
-                        We publish case studies only when they are complete and cleared for disclosure. While we prepare them, we are happy to walk you through relevant work in a conversation.
-                        <x-slot:actions>
-                            <a href="{{ route('contact') }}" class="btn btn-primary">Talk to us</a>
-                            <a href="{{ route('products.index') }}" class="btn btn-secondary">See our products</a>
-                        </x-slot:actions>
-                    </x-site.empty-state>
-                @endif
-            @else
-                <p class="mb-6 text-sm text-subtle" role="status">{{ trans_choice(':count project|:count projects', $projects->total()) }}</p>
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-12">
-                    @foreach ($projects as $project)
-                        @php($wide = $projects->onFirstPage() && ! $hasFilters && $loop->first)
-                        <div class="{{ $wide ? 'md:col-span-2 lg:col-span-12' : 'lg:col-span-6' }}" data-reveal style="--reveal-delay:{{ min($loop->index * 0.04, 0.24) }}s">
-                            <x-site.project-card :project="$project" :size="$wide ? 'large' : 'default'" heading-level="h3" />
-                        </div>
-                    @endforeach
+                <div class="mt-16">
+                    @if ($hasFilters)
+                        <x-site.empty-state title="No projects match these filters" glyph="modelling" class="border-paper-line">
+                            Try removing a filter, or browse everything we have published.
+                            <x-slot:actions>
+                                <a href="{{ route('work.index') }}" class="btn btn-secondary">Show all work</a>
+                            </x-slot:actions>
+                        </x-site.empty-state>
+                    @else
+                        <x-site.empty-state title="Case studies are on their way" glyph="modelling" class="border-paper-line">
+                            We publish case studies only when they are complete and cleared for disclosure. Until then, we are happy to walk you through relevant work in a conversation.
+                            <x-slot:actions>
+                                <a href="{{ route('contact') }}" class="btn btn-primary">Talk to us</a>
+                                <a href="{{ route('products.index') }}" class="btn btn-secondary">See our products</a>
+                            </x-slot:actions>
+                        </x-site.empty-state>
+                    @endif
                 </div>
-                <div class="mt-12">{{ $projects->links() }}</div>
+            @else
+                <ul class="work-grid">
+                    @foreach ($projects as $project)
+                        <li class="work-card" data-reveal style="--reveal-delay:{{ min(($loop->index % 2) * 0.06, 0.06) }}s">
+                            <a href="{{ route('work.show', $project) }}" class="group block">
+                                <div class="work-card-media">
+                                    @if ($project->cover)
+                                        <x-site.picture :media="$project->cover" sizes="(min-width: 768px) 50vw, 100vw" class="h-full w-full object-cover" />
+                                    @else
+                                        <x-site.cover-art :seed="$project->slug" :glyph="$project->services->first()?->icon ?? 'software'" :label="$project->title" />
+                                    @endif
+                                    <span class="work-card-badge">{{ $project->project_type->shortLabel() }}</span>
+                                </div>
+                                <h3 class="work-card-title">{{ $project->title }}</h3>
+                                <p class="work-card-line">{{ $project->shortLine() }}</p>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                <div class="mt-16">{{ $projects->links() }}</div>
             @endif
         </div>
     </section>

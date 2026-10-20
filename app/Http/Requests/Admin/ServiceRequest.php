@@ -39,6 +39,7 @@ class ServiceRequest extends FormRequest
             'body' => ['nullable', 'string', 'max:500000'],
             'hero_media_id' => ['nullable', 'integer', 'exists:media,id'],
             'hero_video_url' => ['nullable', 'string', 'max:500', new SupportedVideo],
+            'loop_video_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where('kind', 'video')],
             'cta_heading' => ['nullable', 'string', 'max:160'],
             'cta_body' => ['nullable', 'string', 'max:500'],
             'cta_label' => ['nullable', 'string', 'max:60'],

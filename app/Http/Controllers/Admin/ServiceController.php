@@ -46,7 +46,7 @@ class ServiceController extends AdminController
 
     public function edit(Service $service): View
     {
-        $service->load(['heroImage', 'seo.ogImage', 'editor']);
+        $service->load(['heroImage', 'loopVideo', 'seo.ogImage', 'editor']);
 
         return view('admin.services.form', ['service' => $service]);
     }
@@ -78,7 +78,7 @@ class ServiceController extends AdminController
     protected function fill(Service $service, ServiceRequest $request): void
     {
         $service->fill($request->safe()->only([
-            'title', 'slug', 'icon', 'short_description', 'hero_media_id', 'hero_video_url', 'cta_heading', 'cta_body', 'cta_label', 'cta_url',
+            'title', 'slug', 'icon', 'short_description', 'hero_media_id', 'hero_video_url', 'loop_video_media_id', 'cta_heading', 'cta_body', 'cta_label', 'cta_url',
         ]));
         $service->body = $this->sanitizer->rich($request->validated('body'));
         $service->capabilities = $request->validated('capabilities') ?: null;

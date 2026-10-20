@@ -1649,6 +1649,251 @@
         }
     }
 
+    /* Work page: full width, large title, filter pills and a two-column grid. */
+    .work-page {
+        padding-block: clamp(3rem, 6vw, 5rem) clamp(5rem, 9vw, 8rem);
+    }
+
+    .work-page-inner {
+        padding-inline: clamp(1rem, 3.2vw, 3.5rem);
+    }
+
+    .work-page-kicker {
+        margin-left: 9%;
+        font-family: var(--font-display);
+        font-size: clamp(3.25rem, 7vw, 6.5rem);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.05em;
+        color: #cfd4ca;
+    }
+
+    .work-page-title {
+        margin-top: -0.12em;
+        max-width: 22ch;
+        font-family: var(--font-display);
+        font-size: clamp(2.75rem, 7vw, 6.5rem);
+        font-weight: 500;
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+    }
+
+    .work-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: clamp(2.5rem, 5vw, 4rem);
+    }
+
+    .work-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-height: 2.75rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: 999px;
+        background: var(--color-paper-2);
+        font-size: 0.95rem;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .work-pill:hover {
+        background: var(--color-paper-3);
+    }
+
+    .work-pill[aria-current='true'] {
+        background: var(--color-ink-text);
+        color: var(--color-paper);
+    }
+
+    .work-select {
+        width: 15rem;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        min-height: 2.75rem;
+        padding: 0.55rem 2.5rem 0.55rem 1.15rem;
+        border: 0;
+        border-radius: 999px;
+        appearance: none;
+        background: var(--color-paper-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%230b0e0b' stroke-width='1.6'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E") no-repeat right 0.9rem center;
+        color: var(--color-ink-text);
+        font-size: 0.95rem;
+        cursor: pointer;
+    }
+
+    .work-grid {
+        display: grid;
+        gap: 3.5rem 1.6rem;
+        margin-top: clamp(3rem, 7vw, 6rem);
+    }
+
+    @media (width >= 48rem) {
+        .work-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            row-gap: clamp(4rem, 6vw, 6rem);
+        }
+    }
+
+    .work-card-media {
+        position: relative;
+        aspect-ratio: 11 / 6;
+        overflow: hidden;
+        border-radius: 1.25rem;
+        background: var(--color-paper-2);
+    }
+
+    .work-card-media img,
+    .work-card-media svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.9s var(--ease-out-expo);
+    }
+
+    .work-card a:hover .work-card-media img,
+    .work-card a:hover .work-card-media svg {
+        transform: scale(1.03);
+    }
+
+    /* Shows whether a project was client work, our own product, a prototype or a concept. */
+    .work-card-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        padding: 0.4rem 0.9rem;
+        border-radius: 999px;
+        background: rgb(8 10 8 / 0.72);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        backdrop-filter: blur(6px);
+    }
+
+    .work-card-title {
+        margin-top: 1.5rem;
+        font-family: var(--font-display);
+        font-size: clamp(1.75rem, 2.4vw, 2.4rem);
+        font-weight: 500;
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+        transition: opacity 0.2s ease;
+    }
+
+    .work-card a:hover .work-card-title {
+        opacity: 0.75;
+    }
+
+    .work-card-line {
+        margin-top: 0.35rem;
+        font-size: 1rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .work-card a:hover .work-card-media img,
+        .work-card a:hover .work-card-media svg {
+            transform: none;
+        }
+    }
+
+    /* Services page: one block per service (title, summary, list, large media). */
+    .service-features {
+        padding-block: clamp(4rem, 8vw, 7rem);
+    }
+
+    /* Full width with the same side margins as the work gallery. */
+    .service-features-inner {
+        padding-inline: clamp(1rem, 3.2vw, 3.5rem);
+    }
+
+    .service-feature {
+        display: grid;
+        gap: 2.5rem;
+    }
+
+    .service-feature + .service-feature {
+        margin-top: clamp(5rem, 10vw, 9rem);
+    }
+
+    @media (width >= 64rem) {
+        .service-feature {
+            grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+            grid-template-rows: auto 1fr;
+            column-gap: clamp(3rem, 6vw, 7rem);
+            row-gap: 0;
+        }
+
+        /* Stays in view while its service scrolls past, then leaves with it. */
+        .service-feature .service-feature-media {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: start;
+            position: sticky;
+            top: 6rem;
+            margin-top: 0.75rem;
+        }
+
+        .service-feature-details {
+            padding-top: 4rem;
+        }
+    }
+
+    .service-feature-title {
+        font-family: var(--font-display);
+        font-size: clamp(2.4rem, 4.4vw, 4.4rem);
+        font-weight: 500;
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+        text-wrap: balance;
+    }
+
+    .service-feature-media {
+        position: relative;
+        aspect-ratio: 16 / 10;
+        overflow: hidden;
+        border-radius: 1.25rem;
+        background: var(--color-paper-2);
+    }
+
+    .service-feature-media img,
+    .service-feature-media svg,
+    .service-feature-media video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .service-feature-list li {
+        padding-block: 0.95rem;
+        border-bottom: 1px solid var(--color-field-light);
+        font-size: clamp(1.1rem, 1.4vw, 1.3rem);
+    }
+
+    .video-toggle {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        display: grid;
+        place-items: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 999px;
+        background: rgb(8 10 8 / 0.65);
+        color: #fff;
+        backdrop-filter: blur(6px);
+    }
+
+    .video-toggle[hidden] {
+        display: none;
+    }
+
     /* About page: dark intro, light sections, scrolling card rows, mission band. */
     .about-hero {
         padding-block: clamp(4rem, 9vw, 7rem) clamp(3.5rem, 7vw, 6rem);

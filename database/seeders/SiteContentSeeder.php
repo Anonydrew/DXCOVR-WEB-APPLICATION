@@ -492,7 +492,7 @@ class SiteContentSeeder extends Seeder
             ]],
         ]);
 
-        $this->systemPage('work', 'Work', 'Case studies, products and experiments, clearly labelled so you know what we built for clients.');
+        $this->systemPage('work', 'Work that solves real problems', 'Case studies, products and experiments, clearly labelled so you know what we built for clients.');
         $this->systemPage('products', 'Products', 'Software products designed, built and maintained by DXCOVR.');
         $this->systemPage('insights', 'Insights', 'Ideas on software, AI, connected devices, immersive technology and design, from the people building it.');
 

@@ -34,6 +34,7 @@ class MediaUsage
         $columnReferences = [
             [Article::class, 'featured_media_id', 'Article', 'title', 'admin.articles.edit'],
             [Service::class, 'hero_media_id', 'Service', 'title', 'admin.services.edit'],
+            [Service::class, 'loop_video_media_id', 'Service video', 'title', 'admin.services.edit'],
             [Page::class, 'hero_media_id', 'Page hero', 'title', 'admin.pages.edit'],
             [Project::class, 'cover_media_id', 'Project cover', 'title', 'admin.projects.edit'],
             [Product::class, 'logo_media_id', 'Product logo', 'name', 'admin.products.edit'],
