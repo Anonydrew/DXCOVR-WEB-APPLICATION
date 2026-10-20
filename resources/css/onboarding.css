@@ -1,0 +1,148 @@
+/*
+ * Visual answer previews for the client onboarding questionnaire, shared by
+ * the client form (site.css) and the admin review screen (admin.css).
+ * Every preview is an original, abstract mock-up drawn from a few tokens.
+ */
+
+@layer components {
+    .ob-font-sans {
+        font-family: var(--font-sans);
+    }
+
+    .ob-font-display {
+        font-family: var(--font-display);
+    }
+
+    .ob-font-serif {
+        font-family: Georgia, Cambria, 'Times New Roman', serif;
+    }
+
+    .ob-font-rounded {
+        font-family: ui-rounded, 'Arial Rounded MT Bold', 'Trebuchet MS', var(--font-sans);
+    }
+
+    .ob-font-mono {
+        font-family: var(--font-mono);
+    }
+
+    /* Style mock-up: a tiny page with a nav, hero, button and cards. */
+    .ob-style-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        aspect-ratio: 16 / 10;
+        padding: 0.7rem 0.8rem;
+        border-radius: 0.65rem;
+        overflow: hidden;
+        background: var(--sp-bg);
+        color: var(--sp-ink);
+        box-shadow: inset 0 0 0 1px rgb(127 127 127 / 0.18);
+    }
+
+    .ob-sp-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .ob-sp-logo {
+        width: 0.55rem;
+        height: 0.55rem;
+        margin-right: auto;
+        border-radius: var(--sp-radius);
+        background: var(--sp-accent);
+    }
+
+    .ob-sp-line {
+        display: block;
+        height: 0.22rem;
+        border-radius: 999px;
+        background: currentColor;
+        opacity: 0.35;
+    }
+
+    .ob-sp-hero {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 0.55rem;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .ob-sp-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.3rem;
+        min-width: 0;
+    }
+
+    .ob-sp-headline {
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ob-sp-button {
+        width: 2.6rem;
+        height: 0.62rem;
+        margin-top: 0.15rem;
+        border-radius: var(--sp-radius);
+        background: var(--sp-accent);
+    }
+
+    .ob-sp-media {
+        border-radius: var(--sp-radius);
+        background:
+            radial-gradient(circle at 70% 30%, var(--sp-accent) 0 18%, transparent 19%),
+            var(--sp-surface);
+    }
+
+    .ob-sp-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.35rem;
+        height: 22%;
+    }
+
+    .ob-sp-cards span {
+        border-radius: var(--sp-radius);
+        background: var(--sp-surface);
+    }
+
+    .ob-palette {
+        display: flex;
+        height: 2.75rem;
+        border-radius: 0.6rem;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgb(127 127 127 / 0.2);
+    }
+
+    .ob-palette span {
+        flex: 1;
+    }
+
+    .ob-type-sample {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .ob-type-sample-glyph {
+        flex: none;
+        font-size: 2.25rem;
+        line-height: 1;
+    }
+
+    .ob-type-sample-text {
+        min-width: 0;
+        font-size: 0.875rem;
+        line-height: 1.35;
+        opacity: 0.8;
+    }
+}

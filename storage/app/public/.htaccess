@@ -1,0 +1,23 @@
+# Public media must never execute as code (defence in depth: uploads are
+# already renamed and type-checked by the media library).
+<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp|htaccess)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_mime.c>
+    RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar
+    RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar
+</IfModule>
+
+Options -Indexes -ExecCGI
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set Cache-Control "public, max-age=2592000"
+
+    # SVGs are sanitised on upload; this also stops any script inside one from
+    # running if the file is opened directly in the browser.
+    <FilesMatch "\.svg$">
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox"
+    </FilesMatch>
+</IfModule>
