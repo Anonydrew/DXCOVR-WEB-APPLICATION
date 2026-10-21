@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Support\SocialNetworks;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -63,6 +64,12 @@ class MediaUsage
         foreach (['seo.default_og_image_id' => 'Default social image', 'seo.organization_logo_id' => 'Organisation logo'] as $key => $label) {
             if ((int) $this->settings->get($key) === $id) {
                 $usages[] = ['type' => 'Setting', 'title' => $label, 'url' => Route::has('admin.settings.edit') ? route('admin.settings.edit', 'seo') : null];
+            }
+        }
+
+        foreach ((array) $this->settings->get('social.links', []) as $profile) {
+            if (is_array($profile) && (int) ($profile['icon'] ?? 0) === $id) {
+                $usages[] = ['type' => 'Setting', 'title' => 'Social icon: '.SocialNetworks::label($profile), 'url' => Route::has('admin.settings.edit') ? route('admin.settings.edit', 'contact') : null];
             }
         }
 

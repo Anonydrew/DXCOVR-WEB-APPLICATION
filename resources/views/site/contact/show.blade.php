@@ -6,7 +6,7 @@
         $phone = $site->get('contact.phone');
         $whatsapp = $site->whatsappUrl();
         $hours = $site->get('contact.hours');
-        $socials = collect($site->get('social.links', []))->filter(fn ($link) => filled($link['url'] ?? null));
+        $socials = \App\Support\SocialNetworks::profiles($site->get('social.links', []));
     @endphp
 
     <x-site.page-hero
@@ -52,7 +52,7 @@
                         <h2 class="mono-label text-subtle">Elsewhere</h2>
                         <ul class="mt-4 flex flex-wrap gap-2">
                             @foreach ($socials as $social)
-                                <li><a href="{{ $social['url'] }}" class="chip" target="_blank" rel="noopener me"><x-icon :name="$social['network'] ?? 'link'" :size="14" /> {{ $social['label'] ?? \Illuminate\Support\Str::headline($social['network'] ?? 'Link') }}</a></li>
+                                <li><a href="{{ $social['url'] }}" class="chip" target="_blank" rel="noopener me"><x-site.social-icon :profile="$social" :size="14" /> {{ \App\Support\SocialNetworks::label($social) }}</a></li>
                             @endforeach
                         </ul>
                     </div>

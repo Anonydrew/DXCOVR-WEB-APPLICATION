@@ -38,7 +38,8 @@
                         @break
                     @case('social')
                         <x-admin.repeater :name="$name" :label="$field['label']" :rows="(array) $value" :max="12" add-label="Add profile"
-                            :fields="['network' => ['label' => 'Network', 'type' => 'select', 'options' => $networks], 'url' => ['label' => 'Profile address (https://…)', 'type' => 'url', 'max' => 500], 'label' => ['label' => 'Label (optional)', 'max' => 60]]" />
+                            hint="Shown as icons in the footer and on the Contact page. Each network shows its own logo. Upload a custom icon (a transparent PNG works best) to replace it, or for a network not in the list choose “Other”. Custom icons are shown in white like the logos."
+                            :fields="['network' => ['label' => 'Network', 'type' => 'select', 'options' => $networks], 'url' => ['label' => 'Profile address (https://…)', 'type' => 'url', 'max' => 500], 'label' => ['label' => 'Label (optional, e.g. “Our TikTok”)', 'max' => 60], 'icon' => ['label' => 'Custom icon (optional)', 'type' => 'media']]" />
                         @break
                     @default
                         <x-admin.input :name="$name" :label="$field['label']" :value="$value" :hint="$field['hint'] ?? null" />

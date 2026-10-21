@@ -1522,6 +1522,19 @@
         }
     }
 
+    /* Uploaded social icons are shown as light silhouettes, matching the brand marks. */
+    .social-custom-icon {
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+        opacity: 0.75;
+        transition: opacity 0.2s ease;
+    }
+
+    a:hover > .social-custom-icon,
+    a:focus-visible > .social-custom-icon {
+        opacity: 1;
+    }
+
     /* Selected work: full-width editorial gallery (image, title, one line). */
     .work-gallery {
         padding-block: clamp(4rem, 8vw, 7.5rem);

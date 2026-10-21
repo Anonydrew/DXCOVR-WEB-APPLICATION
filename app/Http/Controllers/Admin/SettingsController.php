@@ -7,6 +7,7 @@ use App\Rules\RasterImage;
 use App\Rules\SafeUrl;
 use App\Services\SiteSettings;
 use App\Support\ContentCache;
+use App\Support\SocialNetworks;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,18 +19,6 @@ use Illuminate\Validation\Rule;
  */
 class SettingsController extends AdminController
 {
-    public const SOCIAL_NETWORKS = [
-        'linkedin' => 'LinkedIn',
-        'x' => 'X (Twitter)',
-        'instagram' => 'Instagram',
-        'facebook' => 'Facebook',
-        'youtube' => 'YouTube',
-        'github' => 'GitHub',
-        'behance' => 'Behance',
-        'dribbble' => 'Dribbble',
-        'link' => 'Other',
-    ];
-
     public function __construct(protected SiteSettings $settings) {}
 
     /**
@@ -137,7 +126,7 @@ class SettingsController extends AdminController
             'values' => $values,
             'media' => $mediaIds->isEmpty() ? collect() : Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id'),
             'groups' => collect(self::groups())->filter(fn ($item) => $request->user()->can($item['permission']))->map(fn ($item) => $item['label']),
-            'networks' => self::SOCIAL_NETWORKS,
+            'networks' => SocialNetworks::options(),
         ]);
     }
 
@@ -155,7 +144,8 @@ class SettingsController extends AdminController
             };
 
             if ($field['type'] === 'social') {
-                $rules[$input.'.*.network'] = ['required', Rule::in(array_keys(self::SOCIAL_NETWORKS))];
+                $rules[$input.'.*.network'] = ['required', Rule::in(array_keys(SocialNetworks::options()))];
+                $rules[$input.'.*.icon'] = ['nullable', 'integer', new RasterImage];
                 $rules[$input.'.*.url'] = ['required', 'string', 'max:500', new SafeUrl(false)];
                 $rules[$input.'.*.label'] = ['nullable', 'string', 'max:60'];
             }
@@ -175,7 +165,7 @@ class SettingsController extends AdminController
                 'toggle' => $request->boolean($this->inputKey($key)),
                 'number', 'media' => $value === null || $value === '' ? null : (int) $value,
                 'emails' => $this->parseEmails((string) $value),
-                'social' => array_values($value ?? []),
+                'social' => array_values(array_map(fn (array $row) => array_merge($row, ['icon' => filled($row['icon'] ?? null) ? (int) $row['icon'] : null]), $value ?? [])),
                 default => is_string($value) ? trim($value) : $value,
             };
         }
@@ -238,7 +228,7 @@ class SettingsController extends AdminController
             $input = $this->inputKey($key);
             $rows = collect($request->input($input, []))
                 ->filter(fn ($row) => is_array($row) && filled($row['url'] ?? null))
-                ->map(fn ($row) => ['network' => $row['network'] ?? 'link', 'url' => trim((string) $row['url']), 'label' => $row['label'] ?? null])
+                ->map(fn ($row) => ['network' => $row['network'] ?? 'link', 'url' => trim((string) $row['url']), 'label' => $row['label'] ?? null, 'icon' => filled($row['icon'] ?? null) ? $row['icon'] : null])
                 ->values()
                 ->all();
 

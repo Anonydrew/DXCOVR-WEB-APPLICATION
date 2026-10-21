@@ -1,6 +1,6 @@
 @props(['menus' => [], 'site'])
 @php
-    $socials = collect($site->get('social.links', []))->filter(fn ($link) => filled($link['url'] ?? null));
+    $socials = \App\Support\SocialNetworks::profiles($site->get('social.links', []));
     $email = $site->get('contact.email');
     $phone = $site->get('contact.phone');
     $whatsapp = $site->whatsappUrl();
@@ -56,8 +56,8 @@
                     <ul class="mt-6 flex flex-wrap gap-2" aria-label="Social media">
                         @foreach ($socials as $social)
                             <li>
-                                <a href="{{ $social['url'] }}" class="grid size-11 place-items-center rounded-full border border-line-strong text-muted transition hover:border-text hover:text-text" target="_blank" rel="noopener me" aria-label="{{ $social['label'] ?? \Illuminate\Support\Str::headline($social['network'] ?? 'Link') }}">
-                                    <x-icon :name="$social['network'] ?? 'link'" :size="18" />
+                                <a href="{{ $social['url'] }}" class="grid size-11 place-items-center rounded-full border border-line-strong text-muted transition hover:border-text hover:text-text" target="_blank" rel="noopener me" aria-label="{{ \App\Support\SocialNetworks::label($social) }}">
+                                    <x-site.social-icon :profile="$social" :size="18" />
                                 </a>
                             </li>
                         @endforeach
