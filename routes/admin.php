@@ -6,12 +6,14 @@ use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\ArticleCategoryController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\ClientQuestionnaireController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\FounderController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\JobListingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NavigationController;
@@ -176,6 +178,40 @@ Route::middleware('can:dashboard.view')->group(function (): void {
 
         Route::get('/{questionnaire}', [ClientQuestionnaireController::class, 'show'])->name('show');
         Route::get('/{questionnaire}/files/{file}', [ClientQuestionnaireController::class, 'file'])->whereNumber('file')->name('files.show');
+    });
+
+    // Billing: clients and invoices
+    Route::middleware('can:invoices.view')->group(function (): void {
+        Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+        Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+
+        Route::middleware('can:invoices.manage')->group(function (): void {
+            Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+            Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+            Route::get('/clients/{client}/edit', [ClientController::class, 'edit'])->whereNumber('client')->name('clients.edit');
+            Route::put('/clients/{client}', [ClientController::class, 'update'])->whereNumber('client')->name('clients.update');
+            Route::delete('/clients/{client}', [ClientController::class, 'destroy'])->whereNumber('client')->name('clients.destroy');
+
+            Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+            Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+            Route::prefix('invoices/{invoice}')->whereNumber('invoice')->name('invoices.')->group(function (): void {
+                Route::get('/edit', [InvoiceController::class, 'edit'])->name('edit');
+                Route::put('/', [InvoiceController::class, 'update'])->name('update');
+                Route::delete('/', [InvoiceController::class, 'destroy'])->name('destroy');
+                Route::post('/duplicate', [InvoiceController::class, 'duplicate'])->name('duplicate');
+                Route::post('/send', [InvoiceController::class, 'markSent'])->name('send');
+                Route::post('/email', [InvoiceController::class, 'email'])->middleware('throttle:forms')->name('email');
+                Route::post('/void', [InvoiceController::class, 'void'])->name('void');
+                Route::post('/restore', [InvoiceController::class, 'restore'])->name('restore');
+                Route::post('/regenerate', [InvoiceController::class, 'regenerate'])->name('regenerate');
+                Route::post('/payments', [InvoiceController::class, 'storePayment'])->name('payments.store');
+                Route::delete('/payments/{payment}', [InvoiceController::class, 'destroyPayment'])->whereNumber('payment')->name('payments.destroy');
+            });
+        });
+
+        Route::get('/clients/{client}', [ClientController::class, 'show'])->whereNumber('client')->name('clients.show');
+        Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->whereNumber('invoice')->name('invoices.show');
+        Route::get('/invoices/{invoice}/preview', [InvoiceController::class, 'preview'])->whereNumber('invoice')->name('invoices.preview');
     });
 
     // Media library

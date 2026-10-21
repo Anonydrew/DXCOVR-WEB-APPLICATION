@@ -7,6 +7,7 @@ use App\Enums\PublicationStatus;
 use App\Models\Article;
 use App\Models\AuditLog;
 use App\Models\Enquiry;
+use App\Models\Invoice;
 use App\Models\JobApplication;
 use App\Models\JobListing;
 use App\Models\Media;
@@ -63,6 +64,13 @@ class DashboardController extends AdminController
             $stale = Enquiry::query()->unread()->where('created_at', '<=', now()->subDays(2))->count();
             if ($stale > 0) {
                 $attention[] = ['tone' => 'warning', 'text' => trans_choice('{1} 1 enquiry has been unread for over two days|[2,*] :count enquiries have been unread for over two days', $stale), 'route' => route('admin.enquiries.index', ['unread' => 1])];
+            }
+        }
+
+        if ($user->can('invoices.view')) {
+            $overdue = Invoice::query()->overdue()->count();
+            if ($overdue > 0) {
+                $attention[] = ['tone' => 'warning', 'text' => trans_choice('{1} 1 invoice is overdue|[2,*] :count invoices are overdue', $overdue), 'route' => route('admin.invoices.index', ['status' => 'overdue'])];
             }
         }
 

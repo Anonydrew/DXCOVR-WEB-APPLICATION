@@ -7,6 +7,7 @@ use App\Enums\PublicationStatus;
 use App\Models\Article;
 use App\Models\ClientQuestionnaire;
 use App\Models\Enquiry;
+use App\Models\Invoice;
 use App\Models\JobApplication;
 use App\Models\User;
 
@@ -50,6 +51,8 @@ final class AdminNavigation
             ]],
             ['label' => 'Clients', 'items' => [
                 ['label' => 'Client onboarding', 'route' => 'admin.onboarding.index', 'icon' => 'sparkle', 'can' => 'onboarding.view', 'active' => 'admin.onboarding.*', 'count' => 'onboarding'],
+                ['label' => 'Clients', 'route' => 'admin.clients.index', 'icon' => 'user', 'can' => 'invoices.view', 'active' => 'admin.clients.*'],
+                ['label' => 'Invoices', 'route' => 'admin.invoices.index', 'icon' => 'receipt', 'can' => 'invoices.view', 'active' => 'admin.invoices.*', 'count' => 'overdue'],
             ]],
             ['label' => 'Site', 'items' => [
                 ['label' => 'Pages & homepage', 'route' => 'admin.pages.index', 'icon' => 'layers', 'can' => 'pages.manage', 'active' => 'admin.pages.*|admin.sections.*'],
@@ -105,6 +108,7 @@ final class AdminNavigation
             'applications' => JobApplication::query()->where('stage', ApplicationStage::Received->value)->count(),
             'enquiries' => Enquiry::query()->unread()->count(),
             'onboarding' => ClientQuestionnaire::query()->awaitingReview()->count(),
+            'overdue' => Invoice::query()->overdue()->count(),
             default => 0,
         };
     }

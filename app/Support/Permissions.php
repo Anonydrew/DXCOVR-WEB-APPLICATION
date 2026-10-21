@@ -62,6 +62,8 @@ final class Permissions
             'Clients' => [
                 'onboarding.view' => 'View client onboarding questionnaires, answers and uploads',
                 'onboarding.manage' => 'Create, share, reopen and delete client onboarding questionnaires',
+                'invoices.view' => 'View billing clients, invoices and payments',
+                'invoices.manage' => 'Manage billing clients, create and send invoices, record payments and edit invoice settings',
             ],
             'Media' => [
                 'media.view' => 'Browse the media library',

@@ -194,6 +194,9 @@
         @case('alert')
             <path d="M12 3.5 21.5 20h-19z" /><path d="M12 10v4.5M12 17.5v.01" />
             @break
+        @case('receipt')
+            <path d="M5.5 3.5h13v17l-2.2-1.5-2.1 1.5-2.2-1.5-2.2 1.5-2.1-1.5-2.2 1.5z" /><path d="M9 8h6M9 11.5h6M9 15h3.5" />
+            @break
         @case('send')
             <path d="M21 3 10 14M21 3l-7 18-4-7-7-4z" />
             @break

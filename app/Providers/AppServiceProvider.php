@@ -92,6 +92,8 @@ class AppServiceProvider extends ServiceProvider
             Limit::perDay(100)->by('onboarding-uploads-day:'.$request->ip()),
         ]);
 
+        RateLimiter::for('invoices', fn (Request $request) => Limit::perMinute(30)->by('invoices:'.$request->ip()));
+
         RateLimiter::for('admin-uploads', fn (Request $request) => Limit::perMinute(60)->by('uploads:'.($request->user()?->id ?: $request->ip())));
     }
 }

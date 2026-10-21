@@ -72,6 +72,19 @@ class SiteSettings
             'careers.privacy_notice' => 'We use your application only to assess your suitability for this and closely related roles. Only authorised members of our recruitment team can access it, and we delete recruitment records after the retention period described in our privacy policy.',
             'careers.retention_days' => 365,
             'careers.general_applications_email' => null,
+
+            'invoicing.business_name' => null,
+            'invoicing.address' => null,
+            'invoicing.email' => null,
+            'invoicing.phone' => null,
+            'invoicing.tax_number' => null,
+            'invoicing.currency' => 'GHS',
+            'invoicing.number_prefix' => 'INV',
+            'invoicing.payment_days' => 14,
+            'invoicing.tax_label' => 'VAT',
+            'invoicing.tax_rate' => '0',
+            'invoicing.payment_instructions' => null,
+            'invoicing.footer' => 'Thank you for your business.',
         ];
     }
 

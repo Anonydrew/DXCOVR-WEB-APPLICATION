@@ -192,6 +192,65 @@ Alpine.data('mediaUploader', (url) => ({
     },
 }));
 
+/* Invoice editor: line items with live totals --------------------------- */
+
+// Mirrors App\Services\Invoicing so the preview matches what the server saves.
+// Amounts are worked out in minor units (pesewas, cents).
+Alpine.data('invoiceForm', ({ items = [], discount = '', taxRate = '0', currency = '', clientCurrencies = {}, defaultCurrency = 'GHS', followClient = false } = {}) => {
+    let nextKey = 0;
+    const withKey = (item) => ({ description: '', quantity: '1', unit_price: '', ...item, key: nextKey++ });
+    const number = (value) => {
+        const parsed = parseFloat(String(value ?? '').replace(/[,\s]/g, ''));
+        return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    return {
+        items: (items.length ? items : [{}]).map(withKey),
+        discount,
+        taxRate,
+        currency,
+
+        add() {
+            this.items.push(withKey({}));
+            this.$nextTick(() => this.$refs.rows?.lastElementChild?.querySelector('textarea')?.focus());
+        },
+
+        remove(index) {
+            if (this.items.length > 1) this.items.splice(index, 1);
+        },
+
+        clientChanged(id) {
+            if (followClient) this.currency = clientCurrencies[id] || defaultCurrency;
+        },
+
+        lineAmount(item) {
+            const quantity = Math.round(number(item.quantity) * 100) / 100;
+            return Math.round(quantity * Math.round(number(item.unit_price) * 100));
+        },
+
+        get subtotal() {
+            return this.items.reduce((sum, item) => sum + this.lineAmount(item), 0);
+        },
+
+        get discountMinor() {
+            return Math.min(Math.max(0, Math.round(number(this.discount) * 100)), this.subtotal);
+        },
+
+        get tax() {
+            return Math.round(((this.subtotal - this.discountMinor) * number(this.taxRate)) / 100);
+        },
+
+        get total() {
+            return this.subtotal - this.discountMinor + this.tax;
+        },
+
+        format(minor) {
+            const amount = (minor / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return `${(this.currency || '').toUpperCase()} ${amount}`.trim();
+        },
+    };
+});
+
 /* Character counter ----------------------------------------------------- */
 
 Alpine.data('charCount', (max, recommended = null) => ({

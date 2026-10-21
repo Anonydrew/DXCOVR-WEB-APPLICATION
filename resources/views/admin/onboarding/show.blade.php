@@ -14,6 +14,9 @@
 @section('content')
     <x-admin.page-header :title="$questionnaire->project_name" :description="collect([$questionnaire->client_name, $questionnaire->client_company])->filter()->implode(' · ')" :back="route('admin.onboarding.index')">
         <x-slot:actions>
+            @can('invoices.manage')
+                <a href="{{ route('admin.clients.create', ['questionnaire' => $questionnaire->id]) }}" class="a-btn"><x-icon name="receipt" :size="16" /> Add as billing client</a>
+            @endcan
             @can('onboarding.manage')
                 <a href="{{ route('admin.onboarding.edit', $questionnaire) }}" class="a-btn"><x-icon name="edit" :size="16" /> Edit</a>
                 <x-admin.delete-button :action="route('admin.onboarding.destroy', $questionnaire)" confirm="Delete this questionnaire, its answers and all uploaded files permanently?" />

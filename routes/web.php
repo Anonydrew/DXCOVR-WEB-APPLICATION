@@ -4,6 +4,7 @@ use App\Http\Controllers\Site\CareerController;
 use App\Http\Controllers\Site\ContactController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\InsightController;
+use App\Http\Controllers\Site\InvoiceController;
 use App\Http\Controllers\Site\NewsletterController;
 use App\Http\Controllers\Site\OnboardingController;
 use App\Http\Controllers\Site\PageController;
@@ -67,6 +68,11 @@ Route::prefix('onboarding/{token}')
         Route::get('/files/{file}', [OnboardingController::class, 'file'])->withoutMiddleware('throttle:onboarding')->name('files.show');
         Route::delete('/files/{file}', [OnboardingController::class, 'destroyFile'])->name('files.destroy');
     });
+
+Route::get('/invoices/{token}', [InvoiceController::class, 'show'])
+    ->middleware(['noindex', 'throttle:invoices'])
+    ->where('token', '[A-Za-z0-9]{48}')
+    ->name('invoices.show');
 
 Route::get('/preview/{type}/{id}', PreviewController::class)
     ->middleware(['signed', 'noindex'])
