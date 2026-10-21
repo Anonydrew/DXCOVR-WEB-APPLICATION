@@ -40,6 +40,7 @@
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <link rel="alternate" type="application/rss+xml" title="{{ $seo->siteName() }} Insights" href="{{ route('insights.feed') }}">
 
     <script nonce="{{ Vite::cspNonce() }}">document.documentElement.classList.add('js');</script>

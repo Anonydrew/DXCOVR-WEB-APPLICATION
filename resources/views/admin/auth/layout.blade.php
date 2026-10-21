@@ -6,6 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>@yield('title') · {{ app(\App\Services\SiteSettings::class)->get('site.name') }}</title>
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     @vite(['resources/css/admin.css', 'resources/js/admin.js'])
 </head>
 <body class="relative grid min-h-dvh place-items-center overflow-hidden px-4 py-12">
