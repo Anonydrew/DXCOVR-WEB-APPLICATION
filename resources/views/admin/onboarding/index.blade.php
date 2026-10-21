@@ -6,6 +6,7 @@
     <x-admin.page-header title="Client onboarding" description="Private questionnaires your clients complete before a project starts: goals, audience, style inspirations, references and files.">
         <x-slot:actions>
             @can('onboarding.manage')
+                <a href="{{ route('admin.onboarding.questions.index') }}" class="a-btn"><x-icon name="edit" :size="16" /> Edit questions</a>
                 <a href="{{ route('admin.onboarding.create') }}" class="a-btn a-btn-primary"><x-icon name="plus" :size="16" /> New questionnaire</a>
             @endcan
         </x-slot:actions>

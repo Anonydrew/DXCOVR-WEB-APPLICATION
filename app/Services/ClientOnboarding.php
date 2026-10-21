@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\QuestionnaireStatus;
 use App\Models\ClientQuestionnaire;
 use App\Models\ClientQuestionnaireFile;
+use App\Support\Onboarding\QuestionnaireForm;
+use App\Support\Onboarding\QuestionnaireTemplate;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -121,6 +123,38 @@ class ClientOnboarding
         $questionnaire->save();
 
         $this->audit->record('onboarding.reopened', $questionnaire, 'Reopened the questionnaire for '.$questionnaire->project_name);
+    }
+
+    /**
+     * Switches an unsubmitted questionnaire to the builder's latest questions.
+     * Answers to questions that still exist are kept, sections the client was
+     * given stay included and sections added since are included too.
+     */
+    public function refreshQuestions(ClientQuestionnaire $questionnaire): void
+    {
+        $previous = $questionnaire->definition();
+        $latest = QuestionnaireTemplate::definition();
+        $chosen = $questionnaire->sections;
+
+        $questionnaire->sections = array_values(array_filter(
+            array_keys(QuestionnaireForm::optionalSections($latest)),
+            fn (string $key) => $chosen === null
+                || in_array($key, $chosen, true)
+                || ! array_key_exists($key, $previous)
+                || ! empty($previous[$key]['always']),
+        ));
+
+        if ($questionnaire->answers !== null) {
+            $questionnaire->answers = collect($questionnaire->answers)
+                ->map(fn ($values, string $section) => array_intersect_key((array) $values, $latest[$section]['fields'] ?? []))
+                ->filter()
+                ->all();
+        }
+
+        $questionnaire->form = $latest;
+        $questionnaire->save();
+
+        $this->audit->record('onboarding.questions_refreshed', $questionnaire, 'Updated '.$questionnaire->project_name.' to the latest questionnaire questions');
     }
 
     /**

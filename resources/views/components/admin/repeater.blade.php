@@ -1,6 +1,7 @@
 @props(['name', 'label', 'rows' => [], 'fields' => [], 'hint' => null, 'max' => 20, 'addLabel' => 'Add item'])
 {{--
-    Repeating groups of fields. $fields: [key => ['label' => …, 'type' => text|textarea|url|select|media, 'options' => […]]]
+    Repeating groups of fields. $fields: [key => ['label' => …, 'type' => text|textarea|url|select|media|hidden, 'options' => […]]]
+    Hidden fields carry a value with each row (e.g. a stored key) without showing it.
 --}}
 @php
     $key = str_replace(['[', ']'], ['.', ''], $name);
@@ -43,8 +44,14 @@
                         <button type="button" class="a-icon-btn !size-7" @click="remove(index)" aria-label="Remove item"><x-icon name="trash" :size="14" /></button>
                     </div>
                 </div>
-                <div class="grid gap-3 {{ count($fields) > 1 ? 'sm:grid-cols-2' : '' }}">
-                    @foreach ($fields as $field => $definition)
+                @php $visibleFields = collect($fields)->reject(fn ($definition) => ($definition['type'] ?? 'text') === 'hidden'); @endphp
+                @foreach ($fields as $field => $definition)
+                    @if (($definition['type'] ?? 'text') === 'hidden')
+                        <input type="hidden" :name="`{{ $name }}[${index}][{{ $field }}]`" :value="row.{{ $field }}">
+                    @endif
+                @endforeach
+                <div class="grid gap-3 {{ $visibleFields->count() > 1 ? 'sm:grid-cols-2' : '' }}">
+                    @foreach ($visibleFields as $field => $definition)
                         @php
                             $type = $definition['type'] ?? 'text';
                         @endphp

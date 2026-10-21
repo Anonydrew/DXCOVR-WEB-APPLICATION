@@ -18,9 +18,18 @@ export function initQuestionnaire() {
     const status = form.querySelector('[data-save-status]');
     const progressBar = document.querySelector('[data-progress-bar]');
     const progressLabel = document.querySelector('[data-progress-label]');
+    // The admin preview of the questions: nothing is saved, submitted or uploaded.
+    const preview = 'preview' in form.dataset;
     let current = form.dataset.current || keys[0];
     let dirty = false;
     let saving = null;
+
+    if (preview) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            setStatus('Preview only: answers are not saved or submitted.');
+        });
+    }
 
     const setStatus = (message) => {
         if (status) status.textContent = message;
@@ -67,6 +76,11 @@ export function initQuestionnaire() {
     };
 
     const save = async ({ keepalive = false } = {}) => {
+        if (preview) {
+            dirty = false;
+            setStatus('Preview only: answers are not saved.');
+            return null;
+        }
         if (saving) return saving;
 
         const data = new FormData(form);
@@ -273,6 +287,10 @@ function initUploads(form, token, onChange) {
     };
 
     const uploadAll = async (files) => {
+        if ('preview' in form.dataset) {
+            showError('Uploads are switched off in the preview.');
+            return;
+        }
         showError('');
         for (const file of files) {
             await upload(file);

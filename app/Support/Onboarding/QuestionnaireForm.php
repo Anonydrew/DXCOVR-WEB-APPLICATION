@@ -3,13 +3,15 @@
 namespace App\Support\Onboarding;
 
 use App\Models\Enquiry;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
 
 /**
- * The client onboarding questionnaire: sections, questions, visual options
- * and validation. The client form, the admin review screen and the stored
- * answers (answers[section][field]) are all driven by this definition.
+ * The client onboarding questionnaire: question types, visual options and
+ * validation. A definition (sections → fields) is built in the admin
+ * questionnaire builder (QuestionnaireTemplate) and copied onto each
+ * questionnaire when it is created, so later edits never change a form a
+ * client has already been sent. The client form, the admin review screen
+ * and the stored answers (answers[section][field]) are all driven by it.
  */
 final class QuestionnaireForm
 {
@@ -59,27 +61,64 @@ final class QuestionnaireForm
     ];
 
     /**
-     * Fields every submitted questionnaire must answer (section.field).
+     * Question types, with the names shown in the questionnaire builder.
+     *
+     * @var array<string, string>
      */
-    public const REQUIRED_ON_SUBMIT = ['about.contact_name', 'about.contact_email', 'project.summary', 'final.consent'];
+    public const TYPES = [
+        'text' => 'Short answer',
+        'textarea' => 'Paragraph',
+        'email' => 'Email address',
+        'tel' => 'Phone number',
+        'url' => 'Website link',
+        'date' => 'Date',
+        'radio' => 'Single choice',
+        'checkboxes' => 'Multiple choice',
+        'styles' => 'Visual style cards',
+        'palettes' => 'Colour palettes',
+        'typography' => 'Lettering styles',
+        'references' => 'Inspiration links',
+        'uploads' => 'File uploads',
+        'consent' => 'Confirmation checkbox',
+    ];
+
+    /** Types whose options are written in the builder. */
+    public const CHOICE_TYPES = ['radio', 'checkboxes'];
+
+    /** Types that accept several choices, with an optional limit. */
+    public const MULTI_TYPES = ['checkboxes', 'styles', 'palettes'];
+
+    /** Free-text types with a character limit, and their default limit. */
+    public const LENGTH_TYPES = ['text' => 200, 'textarea' => 3000, 'tel' => 40];
+
+    /** Default number of inspiration link rows. */
+    public const DEFAULT_REFERENCES = 8;
 
     /**
-     * Sections that are always included. Others can be switched off per client.
+     * Sections and questions the application relies on (the greeting, the
+     * reply-to address and the consent record). They can be reworded in the
+     * builder but not removed, retyped or made optional.
      */
-    public const ALWAYS_INCLUDED = ['about', 'final'];
+    public const SYSTEM_SECTIONS = ['about', 'final'];
+
+    public const SYSTEM_QUESTIONS = ['about.contact_name', 'about.contact_email', 'final.consent'];
 
     /**
-     * @return array<string, array{title: string, intro: string, fields: array<string, array<string, mixed>>}>
+     * The original questionnaire. It seeds the builder and is the definition
+     * used by questionnaires created before the builder existed.
+     *
+     * @return array<string, array{title: string, intro: string, always: bool, fields: array<string, array<string, mixed>>}>
      */
-    public static function sections(): array
+    public static function defaults(): array
     {
         return [
             'about' => [
                 'title' => 'About you',
                 'intro' => 'Who we will be working with.',
+                'always' => true,
                 'fields' => [
-                    'contact_name' => ['type' => 'text', 'label' => 'Your name', 'max' => 120],
-                    'contact_email' => ['type' => 'email', 'label' => 'Email address'],
+                    'contact_name' => ['type' => 'text', 'label' => 'Your name', 'required' => true, 'max' => 120],
+                    'contact_email' => ['type' => 'email', 'label' => 'Email address', 'required' => true],
                     'contact_phone' => ['type' => 'tel', 'label' => 'Phone or WhatsApp number', 'max' => 40],
                     'role' => ['type' => 'text', 'label' => 'Your role', 'max' => 120],
                     'company' => ['type' => 'text', 'label' => 'Organisation or brand name', 'max' => 160],
@@ -90,6 +129,7 @@ final class QuestionnaireForm
             'project' => [
                 'title' => 'Your project',
                 'intro' => 'What we are building together and why.',
+                'always' => false,
                 'fields' => [
                     'types' => ['type' => 'checkboxes', 'label' => 'What do you need?', 'options' => [
                         'website' => 'Website', 'web_app' => 'Web application', 'mobile_app' => 'Mobile app',
@@ -97,7 +137,7 @@ final class QuestionnaireForm
                         'immersive' => 'AR, VR or WebXR', '3d' => '3D visualisation', 'branding' => 'Branding or UI/UX design',
                         'other' => 'Something else',
                     ]],
-                    'summary' => ['type' => 'textarea', 'label' => 'Describe the project in a few sentences', 'max' => 3000],
+                    'summary' => ['type' => 'textarea', 'label' => 'Describe the project in a few sentences', 'required' => true, 'max' => 3000],
                     'problem' => ['type' => 'textarea', 'label' => 'What problem should it solve?', 'max' => 3000],
                     'goals' => ['type' => 'checkboxes', 'label' => 'Main goals', 'options' => [
                         'leads' => 'Win more customers or leads', 'sell' => 'Sell online', 'automate' => 'Automate operations',
@@ -110,6 +150,7 @@ final class QuestionnaireForm
             'audience' => [
                 'title' => 'Your audience',
                 'intro' => 'Who will use it, where and how.',
+                'always' => false,
                 'fields' => [
                     'audience' => ['type' => 'textarea', 'label' => 'Who are your users or customers?', 'max' => 3000],
                     'regions' => ['type' => 'text', 'label' => 'Where are they?', 'hint' => 'Cities, countries or regions.', 'max' => 200],
@@ -124,6 +165,7 @@ final class QuestionnaireForm
             'look' => [
                 'title' => 'Look & feel',
                 'intro' => 'Pick what feels right. There are no wrong answers. This helps us understand your taste.',
+                'always' => false,
                 'fields' => [
                     'styles' => ['type' => 'styles', 'label' => 'Which styles feel closest to what you want?', 'hint' => 'Choose up to three.', 'max_items' => 3],
                     'mood' => ['type' => 'checkboxes', 'label' => 'Words that should describe the final product', 'hint' => 'Choose up to five.', 'max_items' => 5, 'options' => [
@@ -149,6 +191,7 @@ final class QuestionnaireForm
             'inspiration' => [
                 'title' => 'Inspiration',
                 'intro' => 'Show us examples. Websites, apps, products or anything that inspires you.',
+                'always' => false,
                 'fields' => [
                     'references' => ['type' => 'references', 'label' => 'Websites or apps you like', 'hint' => 'Add a link and tell us what you like about it: the colours, layout, feel or a feature.', 'max_items' => 8],
                     'uploads' => ['type' => 'uploads', 'label' => 'Upload screenshots, sketches, mood boards or your logo', 'hint' => 'JPG, PNG, WebP, GIF or PDF, up to 10 MB each.'],
@@ -159,6 +202,7 @@ final class QuestionnaireForm
             'features' => [
                 'title' => 'Features & content',
                 'intro' => 'What it needs to do and what content exists already.',
+                'always' => false,
                 'fields' => [
                     'features' => ['type' => 'checkboxes', 'label' => 'Features you expect', 'options' => [
                         'accounts' => 'User accounts and login', 'payments' => 'Online payments (e.g. mobile money, cards)', 'booking' => 'Bookings or appointments',
@@ -181,6 +225,7 @@ final class QuestionnaireForm
             'logistics' => [
                 'title' => 'Timeline & budget',
                 'intro' => 'So we can plan realistically. Ranges are fine.',
+                'always' => false,
                 'fields' => [
                     'timeframe' => ['type' => 'radio', 'label' => 'When do you need it?', 'options' => Enquiry::TIMEFRAMES],
                     'launch_date' => ['type' => 'date', 'label' => 'Target launch date', 'hint' => 'If there is a specific date.'],
@@ -195,38 +240,57 @@ final class QuestionnaireForm
             'final' => [
                 'title' => 'Anything else',
                 'intro' => 'Last step. Add anything we have not asked about.',
+                'always' => true,
                 'fields' => [
                     'notes' => ['type' => 'textarea', 'label' => 'Anything else we should know?', 'max' => 5000],
-                    'consent' => ['type' => 'consent', 'label' => 'I confirm DXCOVR may use the information and files in this questionnaire to plan, quote for and deliver my project.'],
+                    'consent' => ['type' => 'consent', 'required' => true, 'label' => 'I confirm DXCOVR may use the information and files in this questionnaire to plan, quote for and deliver my project.'],
                 ],
             ],
         ];
     }
 
     /**
-     * Section keys that may be switched off per client, with their titles.
+     * Section keys of a definition that may be switched off per client, with their titles.
      *
+     * @param  array<string, array<string, mixed>>  $definition
      * @return array<string, string>
      */
-    public static function optionalSections(): array
+    public static function optionalSections(array $definition): array
     {
-        return collect(self::sections())
-            ->except(self::ALWAYS_INCLUDED)
+        return collect($definition)
+            ->reject(fn (array $section) => ! empty($section['always']))
             ->map(fn (array $section) => $section['title'])
             ->all();
     }
 
     /**
-     * The sections included for a client, in questionnaire order.
+     * The sections of a definition included for a client, in questionnaire order.
      *
-     * @param  list<string>|null  $optional
+     * @param  array<string, array<string, mixed>>  $definition
+     * @param  list<string>|null  $optional  Optional section keys chosen for the client; null includes them all.
      * @return array<string, array{title: string, intro: string, fields: array<string, array<string, mixed>>}>
      */
-    public static function enabled(?array $optional): array
+    public static function enabled(array $definition, ?array $optional): array
     {
-        $keys = array_merge(self::ALWAYS_INCLUDED, $optional ?? array_keys(self::optionalSections()));
+        return collect($definition)
+            ->filter(fn (array $section, string $key) => ! empty($section['always']) || $optional === null || in_array($key, $optional, true))
+            ->all();
+    }
 
-        return Arr::only(self::sections(), $keys);
+    /**
+     * The key of the section holding the file upload question, if any.
+     *
+     * @param  array<string, array<string, mixed>>  $sections
+     */
+    public static function uploadsSection(array $sections): ?string
+    {
+        foreach ($sections as $key => $section) {
+            if (collect($section['fields'])->contains(fn (array $field) => $field['type'] === 'uploads')) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -247,7 +311,7 @@ final class QuestionnaireForm
 
     /**
      * Validation rules for answers[section][field]. Saving a draft accepts
-     * partial answers; submitting also enforces REQUIRED_ON_SUBMIT.
+     * partial answers; submitting also enforces the required questions.
      *
      * @param  array<string, array<string, mixed>>  $sections
      * @return array<string, mixed>
@@ -261,7 +325,7 @@ final class QuestionnaireForm
 
             foreach ($section['fields'] as $fieldKey => $field) {
                 $key = "answers.{$sectionKey}.{$fieldKey}";
-                $required = $submitting && in_array("{$sectionKey}.{$fieldKey}", self::REQUIRED_ON_SUBMIT, true) ? 'required' : 'nullable';
+                $required = $submitting && ! empty($field['required']) ? 'required' : 'nullable';
 
                 switch ($field['type']) {
                     case 'checkboxes':
@@ -382,14 +446,17 @@ final class QuestionnaireForm
     }
 
     /**
-     * Whether a section has at least one answer (uploads count for Inspiration).
+     * Whether a section has at least one answer. Confirmation ticks do not
+     * count; uploaded files count for the section holding the upload question.
      *
+     * @param  array<string, mixed>  $section
      * @param  array<string, mixed>  $answers
      */
-    public static function sectionAnswered(string $section, array $answers, int $fileCount = 0): bool
+    public static function sectionAnswered(string $key, array $section, array $answers, int $fileCount = 0): bool
     {
-        $values = collect($answers[$section] ?? [])->except('consent');
+        $consent = collect($section['fields'])->filter(fn (array $field) => $field['type'] === 'consent')->keys()->all();
+        $values = collect($answers[$key] ?? [])->except($consent);
 
-        return $values->isNotEmpty() || ($section === 'inspiration' && $fileCount > 0);
+        return $values->isNotEmpty() || ($fileCount > 0 && self::uploadsSection([$key => $section]) !== null);
     }
 }

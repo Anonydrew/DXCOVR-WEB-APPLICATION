@@ -178,6 +178,7 @@ Check the schedule with `php artisan schedule:list`.
 9. **Pages → Homepage → Spotlight carousel:** add real photography or product screenshots to the cards (portrait images around 800 × 1200 work best). Cards without an image use DXCOVR artwork.
 10. **Pages → Services and Pages → Insights → Hero:** upload a wide background photo for each (at least 2400 px). Until then a DXCOVR artwork background is shown.
 11. **Pages → Homepage → Clients:** add clients only with their written permission to be named, each with a transparent PNG logo and a line about the work delivered. The section stays hidden while it is empty.
+12. **Client onboarding → Edit questions:** review the questionnaire sections and questions (seeded with the original questionnaire). Each questionnaire keeps the questions it was created with; unsubmitted ones can be switched to the latest questions from their admin page.
 
 ## 4. Verifying production
 

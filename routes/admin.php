@@ -22,6 +22,9 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\PublicationController;
+use App\Http\Controllers\Admin\QuestionnaireBuilderController;
+use App\Http\Controllers\Admin\QuestionnaireQuestionController;
+use App\Http\Controllers\Admin\QuestionnaireSectionController;
 use App\Http\Controllers\Admin\RedirectController;
 use App\Http\Controllers\Admin\ReorderController;
 use App\Http\Controllers\Admin\RoleController;
@@ -144,6 +147,22 @@ Route::middleware('can:dashboard.view')->group(function (): void {
         Route::get('/', [ClientQuestionnaireController::class, 'index'])->name('index');
 
         Route::middleware('can:onboarding.manage')->group(function (): void {
+            // Questionnaire builder: the sections and questions new questionnaires use.
+            Route::prefix('questions')->group(function (): void {
+                Route::get('/', [QuestionnaireBuilderController::class, 'index'])->name('questions.index');
+                Route::get('/preview', [QuestionnaireBuilderController::class, 'preview'])->name('questions.preview');
+                Route::get('/sections/create', [QuestionnaireSectionController::class, 'create'])->name('sections.create');
+                Route::post('/sections', [QuestionnaireSectionController::class, 'store'])->name('sections.store');
+                Route::get('/sections/{section}/edit', [QuestionnaireSectionController::class, 'edit'])->whereNumber('section')->name('sections.edit');
+                Route::put('/sections/{section}', [QuestionnaireSectionController::class, 'update'])->whereNumber('section')->name('sections.update');
+                Route::delete('/sections/{section}', [QuestionnaireSectionController::class, 'destroy'])->whereNumber('section')->name('sections.destroy');
+                Route::get('/create', [QuestionnaireQuestionController::class, 'create'])->name('questions.create');
+                Route::post('/', [QuestionnaireQuestionController::class, 'store'])->name('questions.store');
+                Route::get('/{question}/edit', [QuestionnaireQuestionController::class, 'edit'])->whereNumber('question')->name('questions.edit');
+                Route::put('/{question}', [QuestionnaireQuestionController::class, 'update'])->whereNumber('question')->name('questions.update');
+                Route::delete('/{question}', [QuestionnaireQuestionController::class, 'destroy'])->whereNumber('question')->name('questions.destroy');
+            });
+
             Route::get('/create', [ClientQuestionnaireController::class, 'create'])->name('create');
             Route::post('/', [ClientQuestionnaireController::class, 'store'])->name('store');
             Route::get('/{questionnaire}/edit', [ClientQuestionnaireController::class, 'edit'])->name('edit');
@@ -151,6 +170,7 @@ Route::middleware('can:dashboard.view')->group(function (): void {
             Route::patch('/{questionnaire}/notes', [ClientQuestionnaireController::class, 'notes'])->name('notes');
             Route::post('/{questionnaire}/reopen', [ClientQuestionnaireController::class, 'reopen'])->name('reopen');
             Route::post('/{questionnaire}/regenerate', [ClientQuestionnaireController::class, 'regenerate'])->name('regenerate');
+            Route::post('/{questionnaire}/refresh-questions', [ClientQuestionnaireController::class, 'refreshQuestions'])->name('refresh-questions');
             Route::delete('/{questionnaire}', [ClientQuestionnaireController::class, 'destroy'])->name('destroy');
         });
 

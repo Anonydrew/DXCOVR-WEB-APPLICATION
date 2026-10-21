@@ -10,6 +10,8 @@ use App\Models\PageSection;
 use App\Models\Product;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\QuestionnaireQuestion;
+use App\Models\QuestionnaireSection;
 use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
@@ -39,6 +41,8 @@ class ReorderController extends AdminController
         'departments' => [Department::class, 'careers.manage'],
         'sections' => [PageSection::class, 'pages.manage'],
         'navigation' => [NavigationItem::class, 'navigation.manage'],
+        'questionnaire-sections' => [QuestionnaireSection::class, 'onboarding.manage'],
+        'questionnaire-questions' => [QuestionnaireQuestion::class, 'onboarding.manage'],
     ];
 
     public function __invoke(Request $request, string $type): JsonResponse

@@ -82,7 +82,9 @@ class OnboardingController extends Controller
 
         $answers = QuestionnaireForm::normalise($validator->validated()['answers'] ?? [], $sections);
 
-        foreach ($request->file('files', []) as $upload) {
+        $acceptsFiles = QuestionnaireForm::uploadsSection($sections) !== null;
+
+        foreach ($acceptsFiles ? $request->file('files', []) : [] as $upload) {
             $this->onboarding->storeFile($questionnaire, $upload);
         }
 
@@ -104,7 +106,7 @@ class OnboardingController extends Controller
         }
 
         return redirect()
-            ->route('onboarding.show', ['token' => $token, 'step' => $request->filled('remove_file') ? 'inspiration' : $currentStep])
+            ->route('onboarding.show', ['token' => $token, 'step' => $request->filled('remove_file') ? (QuestionnaireForm::uploadsSection($sections) ?? $currentStep) : $currentStep])
             ->with('status', $request->filled('remove_file') ? 'File removed.' : 'Your answers are saved. You can close this page and continue later with the same link.');
     }
 
@@ -112,6 +114,7 @@ class OnboardingController extends Controller
     {
         $questionnaire = $this->resolve($token);
         abort_unless($questionnaire->acceptsAnswers(), 409);
+        abort_if(QuestionnaireForm::uploadsSection($questionnaire->formSections()) === null, 404);
 
         $request->validate(['file' => $this->fileRules()], [], ['file' => 'file']);
 
@@ -188,7 +191,7 @@ class OnboardingController extends Controller
         $key = (string) array_key_first($validator->errors()->messages());
 
         if (Str::startsWith($key, 'files')) {
-            return 'inspiration';
+            return QuestionnaireForm::uploadsSection($sections);
         }
 
         $section = explode('.', $key)[1] ?? null;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Support\Onboarding\QuestionnaireForm;
+use App\Models\ClientQuestionnaire;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +25,7 @@ class ClientQuestionnaireRequest extends FormRequest
             'project_name' => ['required', 'string', 'max:160'],
             'intro_message' => ['nullable', 'string', 'max:2000'],
             'sections' => ['nullable', 'array'],
-            'sections.*' => ['string', Rule::in(array_keys(QuestionnaireForm::optionalSections()))],
+            'sections.*' => ['string', Rule::in(array_keys($this->questionnaire()->optionalSections()))],
             'expires_at' => ['nullable', 'date', 'after:today'],
             'enquiry_id' => ['nullable', 'integer', 'exists:enquiries,id'],
         ];
@@ -45,8 +45,18 @@ class ClientQuestionnaireRequest extends FormRequest
     public function questionnaireData(): array
     {
         $data = $this->validated();
-        $data['sections'] = array_values(array_intersect(array_keys(QuestionnaireForm::optionalSections()), $data['sections'] ?? []));
+        $data['sections'] = array_values(array_intersect(array_keys($this->questionnaire()->optionalSections()), $data['sections'] ?? []));
 
         return $data;
+    }
+
+    /**
+     * The questionnaire being edited, or a new one (which uses the builder's current questions).
+     */
+    protected function questionnaire(): ClientQuestionnaire
+    {
+        $questionnaire = $this->route('questionnaire');
+
+        return $questionnaire instanceof ClientQuestionnaire ? $questionnaire : new ClientQuestionnaire;
     }
 }

@@ -22,7 +22,7 @@ class ClientQuestionnaireFactory extends Factory
             'client_email' => fake()->safeEmail(),
             'client_company' => fake()->company(),
             'project_name' => fake()->words(3, true),
-            'sections' => array_keys(QuestionnaireForm::optionalSections()),
+            'sections' => array_keys(QuestionnaireForm::optionalSections(QuestionnaireForm::defaults())),
             'status' => QuestionnaireStatus::Pending,
         ];
     }

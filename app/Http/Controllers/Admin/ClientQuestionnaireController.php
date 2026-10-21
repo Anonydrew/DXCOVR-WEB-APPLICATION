@@ -7,7 +7,6 @@ use App\Http\Requests\Admin\ClientQuestionnaireRequest;
 use App\Models\ClientQuestionnaire;
 use App\Models\Enquiry;
 use App\Services\ClientOnboarding;
-use App\Support\Onboarding\QuestionnaireForm;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -37,9 +36,9 @@ class ClientQuestionnaireController extends AdminController
     public function create(Request $request): View
     {
         $questionnaire = new ClientQuestionnaire([
-            'sections' => array_keys(QuestionnaireForm::optionalSections()),
             'expires_at' => now()->addDays((int) config('dxcovr.onboarding.link_days', 30)),
         ]);
+        $questionnaire->sections = array_keys($questionnaire->optionalSections());
 
         if ($enquiry = Enquiry::query()->find($request->integer('enquiry'))) {
             $questionnaire->fill([
@@ -105,6 +104,17 @@ class ClientQuestionnaireController extends AdminController
         $this->onboarding->reopen($questionnaire);
 
         return back()->with('status', 'Reopened. The client can edit and submit their answers again using the same link.');
+    }
+
+    public function refreshQuestions(ClientQuestionnaire $questionnaire): RedirectResponse
+    {
+        if ($questionnaire->isSubmitted()) {
+            return back()->with('error', 'Submitted questionnaires keep the questions the client answered. Reopen it first to update the questions.');
+        }
+
+        $this->onboarding->refreshQuestions($questionnaire);
+
+        return back()->with('status', 'This questionnaire now uses the latest questions. Answers to questions that still exist are kept.');
     }
 
     public function regenerate(ClientQuestionnaire $questionnaire): RedirectResponse

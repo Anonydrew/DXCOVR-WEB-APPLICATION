@@ -3,6 +3,7 @@
 @section('title', 'Onboarding · '.$questionnaire->project_name)
 
 @php
+    $preview ??= false;
     $keys = array_keys($sections);
     $total = count($keys);
     $errorCount = count($errors->getBag('default')->keys());
@@ -35,9 +36,9 @@
                 <p class="mt-3 text-sm text-subtle" data-progress-label>Step {{ array_search($step, $keys) + 1 }} of {{ $total }}</p>
                 <ol class="ob-steps mt-5">
                     @foreach ($sections as $key => $section)
-                        @php $answered = \App\Support\Onboarding\QuestionnaireForm::sectionAnswered($key, $questionnaire->answers ?? [], $questionnaire->files->count()); @endphp
+                        @php $answered = \App\Support\Onboarding\QuestionnaireForm::sectionAnswered($key, $section, $questionnaire->answers ?? [], $questionnaire->files->count()); @endphp
                         <li>
-                            <a href="{{ route('onboarding.show', ['token' => $token, 'step' => $key]) }}" class="ob-step-link {{ $key === $step ? 'is-current' : '' }} {{ $answered ? 'is-done' : '' }}" data-step-link="{{ $key }}" @if ($key === $step) aria-current="step" @endif>
+                            <a href="{{ $preview ? request()->fullUrlWithQuery(['step' => $key]) : route('onboarding.show', ['token' => $token, 'step' => $key]) }}" class="ob-step-link {{ $key === $step ? 'is-current' : '' }} {{ $answered ? 'is-done' : '' }}" data-step-link="{{ $key }}" @if ($key === $step) aria-current="step" @endif>
                                 <span class="ob-step-number" aria-hidden="true"><span class="ob-step-index">{{ $loop->iteration }}</span><x-icon name="check" :size="13" class="ob-step-check" /></span>
                                 {{ $section['title'] }}
                             </a>
@@ -46,10 +47,14 @@
                 </ol>
             </aside>
 
-            <form id="questionnaire" method="POST" action="{{ route('onboarding.update', $token) }}" enctype="multipart/form-data" novalidate
-                  data-questionnaire data-current="{{ $step }}" data-upload-url="{{ route('onboarding.files.store', $token) }}" data-max-files="{{ config('dxcovr.onboarding.max_files') }}">
+            <form id="questionnaire" method="POST" action="{{ $preview ? '' : route('onboarding.update', $token) }}" enctype="multipart/form-data" novalidate
+                  data-questionnaire data-current="{{ $step }}" data-upload-url="{{ $preview ? '' : route('onboarding.files.store', $token) }}" data-max-files="{{ config('dxcovr.onboarding.max_files') }}" @if ($preview) data-preview @endif>
                 @csrf
                 <input type="hidden" name="step" value="{{ $step }}" data-step-input>
+
+                @if ($preview)
+                    <div class="ob-notice mb-6" role="status"><x-icon name="eye" :size="18" /> Preview of the current questions. Nothing you enter here is saved.</div>
+                @endif
 
                 @if (session('status'))
                     <div class="ob-notice mb-6" role="status"><x-icon name="check" :size="18" /> {{ session('status') }}</div>
@@ -68,7 +73,9 @@
                         <div class="mb-8">
                             <p class="mono-label text-subtle">Step {{ $loop->iteration }} of {{ $total }}</p>
                             <h2 class="mt-2 font-display text-3xl font-semibold tracking-tight" tabindex="-1" data-step-heading>{{ $section['title'] }}</h2>
-                            <p class="mt-2 text-muted">{{ $section['intro'] }}</p>
+                            @if (filled($section['intro'] ?? null))
+                                <p class="mt-2 text-muted">{{ $section['intro'] }}</p>
+                            @endif
                         </div>
 
                         <div class="space-y-9">
@@ -78,7 +85,7 @@
                                     'fieldKey' => $fieldKey,
                                     'field' => $field,
                                     'value' => $questionnaire->answer($sectionKey.'.'.$fieldKey),
-                                    'required' => in_array($sectionKey.'.'.$fieldKey, \App\Support\Onboarding\QuestionnaireForm::REQUIRED_ON_SUBMIT, true),
+                                    'required' => ! empty($field['required']),
                                 ])
                             @endforeach
                         </div>

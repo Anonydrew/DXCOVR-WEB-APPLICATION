@@ -59,6 +59,20 @@
                         </div>
                     </div>
                 </section>
+
+                @if (! $questionnaire->isSubmitted() && $questionnaire->usesOutdatedQuestions())
+                    <section class="a-alert a-alert-warning" aria-labelledby="questions-changed-heading">
+                        <x-icon name="alert" :size="18" class="mt-0.5 flex-none text-warning" />
+                        <div class="min-w-0 flex-1">
+                            <h2 id="questions-changed-heading" class="font-semibold">The questions have changed since this questionnaire was created</h2>
+                            <p class="mt-1 text-sm a-muted">Your client still sees the questions it was created with. Update it to use the latest questions from the <a href="{{ route('admin.onboarding.questions.index') }}" class="underline">questionnaire builder</a>. Answers to questions that still exist are kept.</p>
+                            <form method="POST" action="{{ route('admin.onboarding.refresh-questions', $questionnaire) }}" class="mt-3" data-confirm="Switch this questionnaire to the latest questions? Answers to questions that were removed will be discarded.">
+                                @csrf
+                                <button type="submit" class="a-btn a-btn-sm"><x-icon name="history" :size="15" /> Update to latest questions</button>
+                            </form>
+                        </div>
+                    </section>
+                @endif
             @endcan
 
             @if (! $hasAnswers)
@@ -71,7 +85,7 @@
                 @foreach ($sections as $sectionKey => $section)
                     @php
                         $answers = $questionnaire->answers[$sectionKey] ?? [];
-                        $answered = \App\Support\Onboarding\QuestionnaireForm::sectionAnswered($sectionKey, $questionnaire->answers ?? [], $questionnaire->files->count());
+                        $answered = \App\Support\Onboarding\QuestionnaireForm::sectionAnswered($sectionKey, $section, $questionnaire->answers ?? [], $questionnaire->files->count());
                     @endphp
                     <section class="a-card" aria-labelledby="section-{{ $sectionKey }}">
                         <div class="a-card-header {{ $answered || $answers ? '' : 'border-b-0' }}">

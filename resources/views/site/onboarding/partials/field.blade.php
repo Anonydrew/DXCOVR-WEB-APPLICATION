@@ -37,7 +37,7 @@
 
         @case('styles')
             <fieldset @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif data-max-choices="{{ $field['max_items'] }}">
-                <legend class="field-label">{{ $field['label'] }}</legend>
+                <legend class="field-label">{{ $field['label'] }}@if ($required) <span class="accent" aria-hidden="true">*</span>@endif</legend>
                 @if ($hint)<p id="{{ $id }}-hint" class="field-hint -mt-1 mb-3">{{ $hint }}</p>@endif
                 <div class="grid gap-4 sm:grid-cols-2 2xl:grid-cols-4">
                     @foreach ($form::STYLES as $styleKey => $style)
@@ -55,7 +55,7 @@
 
         @case('palettes')
             <fieldset @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif data-max-choices="{{ $field['max_items'] }}">
-                <legend class="field-label">{{ $field['label'] }}</legend>
+                <legend class="field-label">{{ $field['label'] }}@if ($required) <span class="accent" aria-hidden="true">*</span>@endif</legend>
                 @if ($hint)<p id="{{ $id }}-hint" class="field-hint -mt-1 mb-3">{{ $hint }}</p>@endif
                 <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach ($form::PALETTES as $paletteKey => $palette)
@@ -72,7 +72,7 @@
 
         @case('typography')
             <fieldset @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif>
-                <legend class="field-label">{{ $field['label'] }}</legend>
+                <legend class="field-label">{{ $field['label'] }}@if ($required) <span class="accent" aria-hidden="true">*</span>@endif</legend>
                 @if ($hint)<p id="{{ $id }}-hint" class="field-hint -mt-1 mb-3">{{ $hint }}</p>@endif
                 <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     @foreach ($form::TYPOGRAPHY as $typeKey => $type)
@@ -98,7 +98,7 @@
                 $visible = max(2, $rows->count() + 1);
             @endphp
             <fieldset @if ($describedBy) aria-describedby="{{ $describedBy }}" @endif>
-                <legend class="field-label">{{ $field['label'] }}</legend>
+                <legend class="field-label">{{ $field['label'] }}@if ($required) <span class="accent" aria-hidden="true">*</span>@endif</legend>
                 @if ($hint)<p id="{{ $id }}-hint" class="field-hint -mt-1 mb-3">{{ $hint }}</p>@endif
                 <ol class="space-y-3" data-reference-list>
                     @for ($i = 0; $i < $field['max_items']; $i++)

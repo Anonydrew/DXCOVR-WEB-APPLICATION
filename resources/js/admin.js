@@ -123,14 +123,16 @@ Alpine.data('listField', (items = []) => ({
 
 /* Sortable lists that persist their order ------------------------------- */
 
-Alpine.data('sortableList', (url) => ({
+// A list nested inside another sortable list needs its own handle and id
+// attribute, e.g. { handle: '.js-section-handle', attribute: 'data-section-id' }.
+Alpine.data('sortableList', (url, { handle = '.a-drag-handle', attribute = 'data-id' } = {}) => ({
     init() {
         Sortable.create(this.$el, {
-            handle: '.a-drag-handle',
+            handle,
             animation: 150,
-            draggable: '[data-id]',
+            draggable: `[${attribute}]`,
             onEnd: async () => {
-                const ids = [...this.$el.querySelectorAll(':scope > [data-id]')].map((element) => element.dataset.id);
+                const ids = [...this.$el.querySelectorAll(`:scope > [${attribute}]`)].map((element) => element.getAttribute(attribute));
 
                 try {
                     await request(url, { method: 'POST', json: { ids } });

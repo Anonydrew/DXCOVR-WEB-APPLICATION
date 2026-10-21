@@ -24,8 +24,11 @@
         </section>
 
         <section class="a-card a-card-body space-y-5" aria-label="Questionnaire options">
-            <x-admin.checkbox-list name="sections" label="Sections to include" :options="\App\Support\Onboarding\QuestionnaireForm::optionalSections()" :selected="$questionnaire->sections ?? []"
-                hint="“About you” and “Anything else” are always included. Untick sections that do not apply to this client." />
+            @php
+                $alwaysIncluded = collect($questionnaire->definition())->filter(fn (array $section) => ! empty($section['always']))->map(fn (array $section) => '“'.$section['title'].'”')->values();
+            @endphp
+            <x-admin.checkbox-list name="sections" label="Sections to include" :options="$questionnaire->optionalSections()" :selected="$questionnaire->sections ?? []"
+                :hint="($alwaysIncluded->isNotEmpty() ? $alwaysIncluded->join(', ', ' and ').' '.($alwaysIncluded->count() === 1 ? 'is' : 'are').' always included. ' : '').'Untick sections that do not apply to this client.'" />
             <x-admin.input name="expires_at" type="date" label="Link expires on" :value="$questionnaire->expires_at?->format('Y-m-d')" hint="Leave empty for a link that never expires. Saved answers are kept either way." class="max-w-xs" />
         </section>
 

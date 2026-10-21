@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\QuestionnaireStatus;
 use App\Models\Concerns\TracksEditors;
 use App\Support\Onboarding\QuestionnaireForm;
+use App\Support\Onboarding\QuestionnaireTemplate;
 use Database\Factories\ClientQuestionnaireFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -22,7 +23,7 @@ use Illuminate\Support\Str;
  * link again.
  */
 #[Fillable(['client_name', 'client_email', 'client_company', 'project_name', 'intro_message', 'sections', 'enquiry_id', 'expires_at', 'internal_notes'])]
-#[Hidden(['token', 'token_hash'])]
+#[Hidden(['token', 'token_hash', 'form'])]
 class ClientQuestionnaire extends Model
 {
     /** @use HasFactory<ClientQuestionnaireFactory> */
@@ -34,6 +35,7 @@ class ClientQuestionnaire extends Model
     {
         return [
             'sections' => 'array',
+            'form' => 'array',
             'answers' => 'array',
             'status' => QuestionnaireStatus::class,
             'token' => 'encrypted',
@@ -50,6 +52,7 @@ class ClientQuestionnaire extends Model
         static::creating(function (self $questionnaire): void {
             $questionnaire->reference ??= (string) Str::ulid();
             $questionnaire->status ??= QuestionnaireStatus::Pending;
+            $questionnaire->form ??= QuestionnaireTemplate::definition();
 
             if ($questionnaire->token_hash === null) {
                 $questionnaire->issueToken();
@@ -136,11 +139,42 @@ class ClientQuestionnaire extends Model
     }
 
     /**
+     * The questions this questionnaire was created with (all sections). A
+     * questionnaire not yet saved uses the builder's current questions.
+     *
+     * @return array<string, array{title: string, intro: string, always: bool, fields: array<string, array<string, mixed>>}>
+     */
+    public function definition(): array
+    {
+        return $this->form ?: ($this->exists ? QuestionnaireForm::defaults() : QuestionnaireTemplate::definition());
+    }
+
+    /**
+     * Sections that may be switched off for this client, with their titles.
+     *
+     * @return array<string, string>
+     */
+    public function optionalSections(): array
+    {
+        return QuestionnaireForm::optionalSections($this->definition());
+    }
+
+    /**
+     * The sections included for this client.
+     *
      * @return array<string, array{title: string, intro: string, fields: array<string, array<string, mixed>>}>
      */
     public function formSections(): array
     {
-        return QuestionnaireForm::enabled($this->sections);
+        return QuestionnaireForm::enabled($this->definition(), $this->sections);
+    }
+
+    /**
+     * Whether the builder's questions have changed since this questionnaire was created.
+     */
+    public function usesOutdatedQuestions(): bool
+    {
+        return QuestionnaireTemplate::fingerprint($this->definition()) !== QuestionnaireTemplate::fingerprint(QuestionnaireTemplate::definition());
     }
 
     public function answer(string $key, mixed $default = null): mixed
@@ -153,9 +187,9 @@ class ClientQuestionnaire extends Model
      */
     public function progress(): array
     {
-        $sections = array_keys($this->formSections());
+        $sections = $this->formSections();
         $fileCount = $this->relationLoaded('files') ? $this->files->count() : $this->files()->count();
-        $answered = collect($sections)->filter(fn (string $key) => QuestionnaireForm::sectionAnswered($key, $this->answers ?? [], $fileCount))->count();
+        $answered = collect($sections)->filter(fn (array $section, string $key) => QuestionnaireForm::sectionAnswered($key, $section, $this->answers ?? [], $fileCount))->count();
 
         return ['answered' => $answered, 'total' => count($sections)];
     }
