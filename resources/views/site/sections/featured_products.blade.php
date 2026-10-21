@@ -1,5 +1,4 @@
 <section class="surface-dark section relative overflow-hidden" aria-labelledby="products-{{ $section->id }}">
-    <div class="glow-lime pointer-events-none absolute -left-60 bottom-0 size-[40rem] opacity-50" aria-hidden="true"></div>
     <div class="container-dx relative">
         <x-site.section-heading
             :id="'products-'.$section->id"

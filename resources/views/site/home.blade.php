@@ -4,7 +4,6 @@
     @if ($sections->isEmpty())
         {{-- Shown only before the homepage has been configured in Admin → Pages → Home. --}}
         <section class="surface-dark relative overflow-hidden">
-            <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_top_right,black_20%,transparent_70%)]" aria-hidden="true"></div>
             <div class="container-dx relative grid items-center gap-12 py-20 lg:grid-cols-12 lg:py-28">
                 <div class="lg:col-span-7">
                     <p class="eyebrow accent">{{ $site->get('site.tagline') }}</p>

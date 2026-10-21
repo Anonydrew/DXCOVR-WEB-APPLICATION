@@ -2,7 +2,6 @@
 
 @section('content')
     <section class="surface-dark relative overflow-hidden">
-        <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" aria-hidden="true"></div>
         <div class="container-dx relative grid min-h-[70vh] items-center gap-12 py-20 lg:grid-cols-12">
             <div class="lg:col-span-7">
                 <p class="eyebrow accent">Error {{ $code }}</p>

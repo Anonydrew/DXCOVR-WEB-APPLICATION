@@ -25,7 +25,7 @@
                         @if ($founder->photo)
                             <x-site.picture :media="$founder->photo" sizes="(min-width: 1024px) 34vw, 100vw" class="h-full w-full object-cover" />
                         @else
-                            <div class="grid h-full place-items-center bg-surface-2 grid-lines">
+                            <div class="grid h-full place-items-center bg-surface-2">
                                 <span class="font-display text-8xl font-semibold text-line-strong" aria-hidden="true">{{ $founder->initials() }}</span>
                             </div>
                         @endif

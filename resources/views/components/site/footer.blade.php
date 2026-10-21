@@ -6,12 +6,10 @@
     $whatsapp = $site->whatsappUrl();
     $columns = ['explore' => 'Explore', 'company' => 'Company', 'legal' => 'Legal'];
 @endphp
-<footer class="surface-dark relative overflow-hidden border-t border-line" aria-labelledby="footer-heading">
+<footer class="surface-dark relative overflow-hidden" aria-labelledby="footer-heading">
     <h2 id="footer-heading" class="sr-only">Site footer</h2>
-    <div class="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
-
     <div class="container-dx relative pt-20 pb-10 sm:pt-28">
-        <div class="grid gap-12 border-b border-line pb-16 lg:grid-cols-12">
+        <div class="grid gap-12 pb-16 lg:grid-cols-12">
             <div class="lg:col-span-7">
                 <p class="eyebrow accent">{{ $site->get('site.tagline') }}</p>
                 <p class="display-md mt-6 max-w-2xl">{{ $site->get('footer.cta_heading') }}</p>
@@ -82,7 +80,7 @@
             @endforeach
         </div>
 
-        <div class="flex flex-col gap-4 border-t border-line pt-8 text-sm text-subtle sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-4 pt-8 text-sm text-subtle sm:flex-row sm:items-center sm:justify-between">
             <p>&copy; {{ now()->year }} {{ $site->get('footer.copyright') }}</p>
             <p class="mono-label">Based in Ghana · Working beyond borders</p>
         </div>

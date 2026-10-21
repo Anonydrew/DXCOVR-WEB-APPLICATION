@@ -2,7 +2,6 @@
 
 @section('content')
     <section class="surface-dark relative overflow-hidden">
-        <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true"></div>
         <div class="container-dx relative pt-12 pb-16 sm:pt-16 sm:pb-24">
             <x-site.breadcrumbs :items="$seo->breadcrumbItems()" />
             <div class="mt-10 grid items-end gap-12 lg:grid-cols-12">
@@ -11,7 +10,7 @@
                         @if ($founder->photo)
                             <x-site.picture :media="$founder->photo" :eager="true" sizes="(min-width: 1024px) 40vw, 100vw" class="h-full w-full object-cover" />
                         @else
-                            <div class="grid h-full place-items-center grid-lines"><span class="font-display text-[9rem] font-semibold text-line-strong" aria-hidden="true">{{ $founder->initials() }}</span></div>
+                            <div class="grid h-full place-items-center"><span class="font-display text-[9rem] font-semibold text-line-strong" aria-hidden="true">{{ $founder->initials() }}</span></div>
                         @endif
                     </div>
                 </div>

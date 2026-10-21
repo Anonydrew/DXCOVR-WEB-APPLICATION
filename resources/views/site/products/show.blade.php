@@ -4,8 +4,6 @@
     @include('site.partials.preview-banner', ['status' => $product->status->label()])
 
     <section class="surface-dark relative overflow-hidden">
-        <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true"></div>
-        <div class="glow-lime pointer-events-none absolute -left-40 top-20 size-[36rem] opacity-50" aria-hidden="true"></div>
         <div class="container-dx relative pt-12 sm:pt-16">
             <x-site.breadcrumbs :items="$seo->breadcrumbItems()" />
             <div class="mt-10 grid items-end gap-10 lg:grid-cols-12">

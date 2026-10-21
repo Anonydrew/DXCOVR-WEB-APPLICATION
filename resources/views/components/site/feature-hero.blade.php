@@ -14,7 +14,6 @@
             <x-site.picture :media="$media" :eager="true" sizes="100vw" alt="" class="feature-hero-photo" />
         @else
             <div class="feature-hero-artwork">
-                <div class="grid-lines absolute inset-0 opacity-70"></div>
                 {{-- An original wireframe ribbon rising to the right. --}}
                 <svg class="feature-hero-lattice" viewBox="0 0 600 400" fill="none" preserveAspectRatio="xMaxYMax meet">
                     <path d="M40 400 C 200 300, 380 230, 600 205" stroke="currentColor" stroke-width="2.5" />

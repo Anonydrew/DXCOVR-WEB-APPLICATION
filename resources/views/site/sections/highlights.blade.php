@@ -21,13 +21,9 @@
                     $isHero = $loop->index % 4 === 0;
                 @endphp
                 <article class="card {{ ! empty($item['url']) ? 'card-link' : '' }} group relative flex flex-col justify-end overflow-hidden p-7 sm:p-9 {{ $layout }}" data-reveal style="--reveal-delay:{{ $loop->index * 0.06 }}s">
-                    <div class="pointer-events-none absolute inset-0 grid-lines opacity-70" aria-hidden="true"></div>
                     <div class="pointer-events-none absolute right-6 top-6 text-line-strong transition duration-700 group-hover:text-muted sm:right-9 sm:top-9" aria-hidden="true">
                         <x-site.glyph :name="$item['icon'] ?? 'software'" :size="$isHero ? 220 : 88" />
                     </div>
-                    @if ($isHero)
-                        <div class="glow-lime pointer-events-none absolute -bottom-32 -left-24 size-[28rem]" aria-hidden="true"></div>
-                    @endif
                     <div class="relative max-w-xl {{ $isHero ? '' : 'pt-20 sm:pt-16 lg:pr-24' }}">
                         @if (! empty($item['label']))
                             <p class="mono-label accent">{{ $item['label'] }}</p>

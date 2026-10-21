@@ -4,7 +4,6 @@
     $email = $site->get('contact.email');
 @endphp
 <section id="start-a-project" class="surface-dark section relative overflow-hidden border-t border-line" aria-labelledby="enquiry-{{ $section->id }}">
-    <div class="glow-lime pointer-events-none absolute -right-40 top-10 size-[36rem] opacity-70" aria-hidden="true"></div>
     <div class="container-dx relative grid gap-12 lg:grid-cols-12">
         <div class="lg:col-span-5">
             @if ($section->value('eyebrow'))

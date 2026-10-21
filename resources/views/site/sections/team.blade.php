@@ -8,7 +8,7 @@
                         @if ($member->photo)
                             <x-site.picture :media="$member->photo" sizes="(min-width: 1024px) 25vw, 50vw" class="h-full w-full object-cover" />
                         @else
-                            <div class="grid h-full place-items-center grid-lines"><span class="font-display text-6xl font-semibold text-line-strong" aria-hidden="true">{{ $member->initials() }}</span></div>
+                            <div class="grid h-full place-items-center"><span class="font-display text-6xl font-semibold text-line-strong" aria-hidden="true">{{ $member->initials() }}</span></div>
                         @endif
                     </div>
                     <div class="p-4">

@@ -2,7 +2,6 @@
 
 @section('content')
     <section class="surface-dark relative overflow-hidden">
-        <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true"></div>
         <div class="container-dx relative py-16 sm:py-24">
             <p class="eyebrow accent">Search</p>
             <h1 class="display-md mt-5">{{ $term !== '' ? 'Results for “'.$term.'”' : 'Search DXCOVR' }}</h1>

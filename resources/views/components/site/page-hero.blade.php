@@ -1,8 +1,6 @@
 @props(['eyebrow' => null, 'title', 'lede' => null, 'breadcrumbs' => [], 'glyph' => null, 'surface' => 'dark'])
 <section {{ $attributes->merge(['class' => ($surface === 'light' ? 'surface-light' : 'surface-dark').' relative overflow-hidden']) }}>
     @if ($surface !== 'light')
-        <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true"></div>
-        <div class="glow-lime pointer-events-none absolute -right-40 -top-40 size-[34rem] opacity-60" aria-hidden="true"></div>
     @endif
     <div class="container-dx relative pt-12 pb-16 sm:pt-16 sm:pb-24">
         @if ($breadcrumbs)

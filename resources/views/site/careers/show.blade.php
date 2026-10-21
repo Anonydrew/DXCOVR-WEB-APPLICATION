@@ -5,7 +5,6 @@
 
     <article>
         <header class="surface-dark relative overflow-hidden">
-            <div class="grid-lines pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true"></div>
             <div class="container-dx relative pt-12 pb-14 sm:pt-16 sm:pb-20">
                 <x-site.breadcrumbs :items="$seo->breadcrumbItems()" />
                 <div class="mt-10 max-w-4xl">

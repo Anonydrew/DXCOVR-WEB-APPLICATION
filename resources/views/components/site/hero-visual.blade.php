@@ -6,7 +6,6 @@
 --}}
 @props(['minimal' => false])
 <div {{ $attributes->merge(['class' => 'hero-visual relative aspect-square w-full']) }} aria-hidden="true">
-    <div class="glow-lime absolute inset-[8%] rounded-full"></div>
     <svg viewBox="0 0 560 560" fill="none" class="relative h-full w-full" focusable="false">
         <defs>
             <radialGradient id="hv-core" cx="50%" cy="50%" r="50%">

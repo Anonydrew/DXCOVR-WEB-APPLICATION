@@ -18,7 +18,6 @@
                 <x-site.picture :media="$media" :eager="true" sizes="100vw" alt="" class="hero-photo" />
             @else
                 <div class="hero-artwork">
-                    <div class="grid-lines absolute inset-0 opacity-70"></div>
                     <x-site.hero-visual :minimal="true" class="hero-artwork-visual" />
                 </div>
             @endif

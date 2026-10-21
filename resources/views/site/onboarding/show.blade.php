@@ -10,7 +10,6 @@
 
 @section('content')
     <section class="relative overflow-hidden border-b border-line">
-        <div class="grid-lines pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
         <div class="container-dx relative py-12 sm:py-16">
             <p class="eyebrow accent">Welcome{{ $questionnaire->contactName() ? ', '.\Illuminate\Support\Str::before($questionnaire->contactName(), ' ') : '' }}</p>
             <h1 class="mt-4 max-w-3xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Let’s shape {{ $questionnaire->project_name }}</h1>

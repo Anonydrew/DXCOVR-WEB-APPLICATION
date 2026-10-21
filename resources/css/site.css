@@ -105,24 +105,6 @@
         padding-block: clamp(3rem, 6vw, 5.5rem);
     }
 
-    .grid-lines {
-        background-image:
-            linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
-        background-size: 4rem 4rem;
-    }
-
-    .surface-light.grid-lines,
-    .surface-light .grid-lines {
-        background-image:
-            linear-gradient(to right, rgb(11 14 11 / 0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(11 14 11 / 0.05) 1px, transparent 1px);
-    }
-
-    .glow-lime {
-        background: radial-gradient(closest-side, rgb(166 236 70 / 0.18), transparent 70%);
-    }
-
     /* -------------------------------------------------------------- */
     /* Typography                                                     */
     /* -------------------------------------------------------------- */
@@ -1080,7 +1062,6 @@
         position: absolute;
         inset: 0;
         background:
-            radial-gradient(48rem 36rem at 72% 45%, rgb(166 236 70 / 0.16), transparent 65%),
             radial-gradient(30rem 24rem at 95% 90%, rgb(140 200 255 / 0.08), transparent 70%),
             linear-gradient(120deg, #070907 0%, #0e130e 55%, #101810 100%);
     }
@@ -2450,7 +2431,6 @@
         inset: 0;
         background:
             radial-gradient(50rem 30rem at 20% 25%, rgb(255 255 255 / 0.06), transparent 70%),
-            radial-gradient(40rem 26rem at 85% 85%, rgb(166 236 70 / 0.14), transparent 65%),
             linear-gradient(160deg, #141914 0%, #0b0e0b 60%, #080a08 100%);
     }
 
@@ -2462,7 +2442,6 @@
         height: 80%;
         color: var(--color-lime);
         opacity: 0.6;
-        filter: drop-shadow(0 0 12px rgb(166 236 70 / 0.35));
     }
 
     /* Darkens any photo evenly, with extra depth at the bottom for the text. */
@@ -2521,7 +2500,6 @@
     .spotlight {
         --gutter: 1rem;
         background:
-            radial-gradient(60rem 30rem at 85% 0%, rgb(166 236 70 / 0.12), transparent 60%),
             linear-gradient(180deg, #eef1ea 0%, var(--color-paper) 55%);
     }
 
@@ -2732,11 +2710,7 @@
     .spotlight-dark .spotlight-art {
         color: var(--color-text);
         padding-bottom: 9rem;
-        background:
-            radial-gradient(16rem 13rem at 50% 32%, rgb(166 236 70 / 0.22), transparent 70%),
-            linear-gradient(to right, rgb(255 255 255 / 0.04) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
-            linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
-            var(--color-surface);
+        background: var(--color-surface);
     }
 
     /* Lime cards */
@@ -2794,9 +2768,7 @@
     .spotlight-light .spotlight-art {
         color: var(--color-ink-text);
         padding-bottom: 9rem;
-        background:
-            radial-gradient(18rem 14rem at 50% 30%, rgb(166 236 70 / 0.35), transparent 70%),
-            #fff;
+        background: #fff;
     }
 
     .spotlight-light .spotlight-text {
