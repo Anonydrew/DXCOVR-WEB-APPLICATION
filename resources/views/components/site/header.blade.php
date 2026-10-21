@@ -1,7 +1,7 @@
 @props(['items' => [], 'site'])
 @php($contactUrl = route('contact'))
 <header class="site-header" data-site-header data-scrolled="false">
-    <div class="container-dx flex h-[4.5rem] items-center gap-6">
+    <div class="container-dx flex h-16 items-center gap-6">
         <x-site.logo :href="route('home')" :label="$site->get('site.name')" class="text-text" />
 
         <nav aria-label="Main" class="ml-auto hidden lg:block">
@@ -42,41 +42,41 @@
         </nav>
 
         <div class="ml-auto flex items-center gap-2 lg:ml-2">
-            <a href="{{ route('search') }}" class="grid size-11 place-items-center rounded-full text-muted transition hover:bg-white/5 hover:text-text" aria-label="Search the site">
+            <a href="{{ route('search') }}" class="grid size-10 place-items-center rounded-full text-paper-muted transition hover:bg-ink/5 hover:text-ink-text" aria-label="Search the site">
                 <x-icon name="search" :size="20" />
             </a>
-            <a href="{{ $contactUrl }}" class="btn btn-white btn-sm hidden sm:inline-flex">
+            <a href="{{ $contactUrl }}" class="btn btn-dark btn-sm hidden sm:inline-flex">
                 Start a project
                 <x-icon name="arrow-right" :size="16" class="btn-arrow" />
             </a>
-            <button type="button" class="grid size-11 place-items-center rounded-full border border-field text-text lg:hidden" data-drawer-open aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+            <button type="button" class="grid size-10 place-items-center rounded-full border border-paper-line text-ink-text lg:hidden" data-drawer-open aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
                 <x-icon name="menu" :size="20" />
             </button>
         </div>
     </div>
 
     {{-- Mobile navigation drawer --}}
-    <div id="mobile-menu" class="mobile-drawer lg:hidden" data-drawer hidden role="dialog" aria-modal="true" aria-label="Menu">
-        <div class="container-dx flex h-[4.5rem] flex-none items-center justify-between">
+    <div id="mobile-menu" class="mobile-drawer surface-light lg:hidden" data-drawer hidden role="dialog" aria-modal="true" aria-label="Menu">
+        <div class="container-dx flex h-16 flex-none items-center justify-between">
             <x-site.logo :href="route('home')" :label="$site->get('site.name')" class="text-text" />
-            <button type="button" class="grid size-11 place-items-center rounded-full border border-field" data-drawer-close aria-label="Close menu">
+            <button type="button" class="grid size-10 place-items-center rounded-full border border-paper-line text-ink-text" data-drawer-close aria-label="Close menu">
                 <x-icon name="close" :size="20" />
             </button>
         </div>
         <nav aria-label="Mobile" class="container-dx flex-1 py-6">
-            <ul class="divide-y divide-line border-y border-line">
+            <ul class="divide-y divide-paper-line border-y border-paper-line">
                 @foreach ($items as $index => $item)
                     <li>
                         @if ($item['children'])
                             <details class="disclosure group">
                                 <summary class="flex items-center justify-between py-4 font-display text-2xl font-semibold">
                                     {{ $item['label'] }}
-                                    <x-icon name="plus" :size="22" class="disclosure-icon text-lime" />
+                                    <x-icon name="plus" :size="22" class="disclosure-icon text-lime-deep" />
                                 </summary>
                                 <ul class="space-y-1 pb-5">
-                                    <li><a href="{{ $item['href'] }}" class="block py-2 font-semibold text-lime">All {{ \Illuminate\Support\Str::lower($item['label']) }}</a></li>
+                                    <li><a href="{{ $item['href'] }}" class="block py-2 font-semibold text-lime-deep">All {{ \Illuminate\Support\Str::lower($item['label']) }}</a></li>
                                     @foreach ($item['children'] as $child)
-                                        <li><a href="{{ $child['href'] }}" class="block py-2 text-muted hover:text-text">{{ $child['label'] }}</a></li>
+                                        <li><a href="{{ $child['href'] }}" class="block py-2 text-muted hover:text-ink-text">{{ $child['label'] }}</a></li>
                                     @endforeach
                                 </ul>
                             </details>
